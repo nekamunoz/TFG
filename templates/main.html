@@ -10,15 +10,16 @@
     <title>
         MyPage Project
     </title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <link href="{% static 'css/nucleo-icons.css' %}" rel="stylesheet" />
-    <link href="{% static 'css/nucleo-svg.css' %}" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-    <link id="pagestyle" href="{% static 'css/argon-dashboard.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" />
+    <link rel="stylesheet" href="{% static 'css/uicons-regular-rounded.css' %}" />
+    <link id="pagestyle" rel="stylesheet" href="{% static 'css/argon-dashboard.css' %}" />
     </head>
 
     {% block content %}
-
+    <!-- ICONO PARA PROBAR SI FUNCTIONAN -->
+    <body>
+        <i class="fi fi-rr-user "></i> <!-- Example icon from uicons-regular-rounded -->
+    </body>    
     {% endblock content %}
 
 </html>
