@@ -1,30 +1,8 @@
 # Archivos de caché de Python
 __pycache__/
-*.pyc
-*.pyo
+chat/__pycache__/
+base/__pycache__/
+mypage/mypage/__pycache__/
 
-# Configuración del entorno virtual
-venv/
-env/
-*.venv
-
-# Archivos de bases de datos locales
+# Base de datos
 db.sqlite3
-*.sqlite3
-
-# Archivos de configuración del entorno
-.env
-*.env
-
-# Configuración de IDEs y editores
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs y archivos temporales
-*.log
-*.pot
-*.py[co]
-*.so
-*.DS_Store
