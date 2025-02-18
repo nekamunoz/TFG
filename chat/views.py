@@ -2,40 +2,25 @@ from django.shortcuts import render, redirect
 from chat.models import Room, Message
 from django.http import HttpResponse, JsonResponse
 
-def chat(request):
-    return render(request, 'chat.html')
+def CreateRoom(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        room = request.POST['room']
+        try:
+            get_room = Room.objects.get(room_name=room)
+            return redirect('room', room_name=room, username=username)
+        except Room.DoesNotExist:
+            new_room = Room(room_name=room)
+            new_room.save()
+            return redirect('room', room_name=room, username=username)
+    return render(request, 'index.html')
 
-def room(request, room):
-    username = request.GET.get('username')
-    room_details = Room.objects.get(name=room)
-    return render(request, 'room.html', {
-        'username': username,
-        'room': room,
-        'room_details': room_details
-    })
-
-def checkview(request):
-    room = request.POST['room_name']
-    username = request.POST['username']
-
-    if Room.objects.filter(name=room).exists():
-        return redirect('/chat/'+room+'/?username='+username)
-    else:
-        new_room = Room.objects.create(name=room)
-        new_room.save()
-        return redirect('/chat/'+room+'/?username='+username)
-
-def send(request):
-    message = request.POST['message']
-    username = request.POST['username']
-    room_id = request.POST['room_id']
-
-    new_message = Message.objects.create(value=message, user=username, room=room_id)
-    new_message.save()
-    return HttpResponse('Message sent successfully')
-
-def getMessages(request, room):
-    room_details = Room.objects.get(name=room)
-
-    messages = Message.objects.filter(room=room_details.id)
-    return JsonResponse({"messages":list(messages.values())})
+def MessageView(request, room_name, username):
+    get_room = Room.objects.get(room_name=room_name)
+    get_messages = Message.objects.filter(room=get_room)
+    context = {
+        "messages": get_messages,
+        "user": username,
+        "room_name": room_name,
+    }
+    return render(request, '_message.html', context)
