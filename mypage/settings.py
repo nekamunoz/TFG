@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'base',
     'chat',
     'channels',
+    'widget_tweaks'
 ]
 
 MIDDLEWARE = [
@@ -89,7 +90,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
+USE_TZ = True
+
 
 USE_I18N = True
 

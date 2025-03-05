@@ -21461,6 +21461,7 @@ fieldset:disabled .btn {
 
 .alert-success {
   background-image: linear-gradient(310deg, #2dce89 0%, rgb(37.6852589641, 172.5147410359, 170.8398406375) 100%);
+  line-height: 1;
 }
 
 .alert-info {
@@ -21473,6 +21474,7 @@ fieldset:disabled .btn {
 
 .alert-danger {
   background-image: linear-gradient(310deg, #f5365c 0%, rgb(243.0663507109, 65.2549763033, 15.1336492891) 100%);
+  line-height: 1;
 }
 
 .alert-light {
