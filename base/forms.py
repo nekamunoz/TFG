@@ -1,6 +1,9 @@
-from base.models import CustomUser, Appointment
-from django.contrib.auth.forms import UserCreationForm
+from datetime import datetime
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
+from agenda.models import Appointment, Agenda
+from base.models import CustomUser, Doctor, Patient
 
 class CustomRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30)
@@ -19,13 +22,13 @@ class CustomRegistrationForm(UserCreationForm):
             user.save()
         return user	
     
+
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['doctor', 'patient', 'date', 'reason']
-        widgets = {
-            'doctor': forms.Select(attrs={'class': 'form-control'}),
-            'patient': forms.Select(attrs={'class': 'form-control'}),
-            'date': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
-            'reason': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
-        }
+        fields = ['patient', 'date', 'time', 'reason']
+
+    today = datetime.now().date()
+    date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), initial=today)
+    time = forms.ChoiceField(choices=[], required=True)
+    reason = forms.CharField(widget=forms.Textarea, required=True)

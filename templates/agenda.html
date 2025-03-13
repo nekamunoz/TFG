@@ -1,0 +1,55 @@
+{% extends 'core.html' %}
+{% load static %} {% load widget_tweaks %} {% load custom_filters %}
+
+{% block containers %}
+<div class="container-fluid py-4">
+    <!-- Agenda Section -->
+    <div class="row mt-2">
+        <div class="col-lg-12 mb-lg-0 mb-4">
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-header pb-0 p-3">
+                    <h4 class="text-center mt-4 mb-4">Agenda for {{ selected_date }}</h4>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-4">
+                                <input type="date" name="selected_date" class="form-control" value="{{ selected_date|date:'Y-m-d' }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary">Show Slots</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row justify-content-center mb-6">
+                        {% if agenda %}
+                            {% for slot in agenda %}
+                                <div class="col-md-3 mb-3 d-flex align-items-stretch">
+                                    {% if slot in booked_agenda and booked_agenda|get:slot == 'pending' %}
+                                        <div class="card text-center shadow-sm w-100" style="background-color: orange;">
+                                            <div class="card-body d-flex align-items-center justify-content-center">
+                                                <p class="card-text mb-0">{{ slot }}</p>
+                                            </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="card text-center shadow-sm w-100">
+                                            <div class="card-body d-flex align-items-center justify-content-center">
+                                                <p class="card-text mb-0">{{ slot }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col-12 text-center">
+                                <p class="mb-0">No available slots for this day.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock containers %}

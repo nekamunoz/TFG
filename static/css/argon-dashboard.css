@@ -6480,8 +6480,8 @@ fieldset:disabled .btn {
   --bs-btn-close-disabled-opacity: 0.25;
   --bs-btn-close-white-filter: invert(1) grayscale(100%) brightness(200%);
   box-sizing: content-box;
-  width: 1em;
-  height: 1em;
+  width: 1.5em;
+  height: 1.5em;
   padding: 0.25em 0.25em;
   color: var(--bs-btn-close-color);
   background: transparent var(--bs-btn-close-bg) center/1em auto no-repeat;
@@ -11311,6 +11311,10 @@ fieldset:disabled .btn {
 
 .bg-dark {
   background-color: #344767 !important;
+}
+
+.bg-dark-blue {
+  background-color: #376582 !important;
 }
 
 .bg-white {
@@ -21627,6 +21631,7 @@ fieldset:disabled .btn {
 .badge.bg-white {
   background: #fff;
 }
+
 
 .badge {
   text-transform: uppercase;

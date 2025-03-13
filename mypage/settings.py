@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'base',
+    'agenda',
     'chat',
     'channels',
     'widget_tweaks'
