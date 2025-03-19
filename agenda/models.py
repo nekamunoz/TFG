@@ -2,7 +2,6 @@ from datetime import date, datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django.utils.timezone import now
 
 from base.models import Doctor, Patient
 
@@ -40,7 +39,7 @@ class Agenda(models.Model):
             slots.append(start.time().strftime('%H:%M'))
             start += slot_delta
 
-        booked_slots = Appointment.objects.filter(doctor=self.doctor, date=target_date)
+        booked_slots = Appointment.objects.filter(doctor=self.doctor, date=target_date, status__in=["confirmed", "pending"]) 
 
         return slots, booked_slots
 
@@ -67,7 +66,6 @@ class Appointment(models.Model):
         return f'{self.doctor} - {self.patient} - {self.date} {self.time} - {self.status}'
 
     def clean(self):
-        """Validar que el doctor y el paciente no tengan otra cita en el mismo horario o en los 30 minutos anteriores/posteriores."""
         appointment_datetime = datetime.combine(self.date, self.time)  # Convertir a datetime completo
         time_start = appointment_datetime - timedelta(minutes=29)  # 30 minutos antes
         time_end = appointment_datetime + timedelta(minutes=29)  # 30 minutos después
@@ -99,9 +97,13 @@ class Appointment(models.Model):
 
     @staticmethod
     def cancel_past_pending_appointments():
-        """Cancela automáticamente citas pendientes en fechas pasadas."""
         local_time = timezone.localtime(timezone.now())
         Appointment.objects.filter(status='pending', date__lt=local_time.date()).update(status='cancelled')
+
+    @staticmethod
+    def finish_past_confirmed_appointments():
+        local_time = timezone.localtime(timezone.now())
+        Appointment.objects.filter(status='confirmed', date__lt=local_time.date()).update(status='finished')
 
     class Meta:
         constraints = [

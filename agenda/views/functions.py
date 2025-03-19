@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
-from .models import Agenda, Appointment
+from ..models import Agenda, Appointment
 from base.models import Doctor
 
 def string_to_time(time_str):
@@ -60,14 +60,14 @@ def get_available_slots_by_specialty(selected_specialty, selected_date):
     for agenda in agendas:
         slots, appointments_qs = agenda.generate_slots(selected_date)
         
-        specialty_slots[agenda.doctor] = set(slots)  # Store slots per doctor
+        specialty_slots[agenda.doctor] = set(slots)
         booked_specialty_slots[agenda.doctor] = {
             appointment.time.strftime('%H:%M') for appointment in appointments_qs
         }
     
     for doctor, slots in specialty_slots.items():
         booked_slots = booked_specialty_slots.get(doctor, set())
-        available_slots.update(slots - booked_slots)  # Keep only unbooked slots
+        available_slots.update(slots - booked_slots)  
 
     return sorted(list(available_slots))
 

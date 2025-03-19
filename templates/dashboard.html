@@ -2,21 +2,15 @@
 {% load static %} {% load widget_tweaks %}
 
 {% block containers %}
-<div class="container-fluid py-4">
+<div class="container-fluid">
     <!-- Appointments Table -->
     <div class="row mt-4">
         <div class="col-lg-12 mb-lg-0 mb-4">
             <div class="card">
                 <div class="card-header pb-0 p-3">
                     <h6 class="mb-2 mt-2 ms-2">Appointments</h6>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="hideCancelled">
-                        <label class="form-check-label" for="hideCancelled">
-                            Hide cancelled appointments
-                        </label>
-                    </div>
                 </div>
-                <div class="table-responsive ms-3 me-3" style="max-height: 400px; overflow-y: auto;">
+                <div class="table-responsive ms-3 me-3" style="max-height: 350px; overflow-y: auto;">
                     <table class="table align-items-center text-xs" id="dataTable">
                         <thead>
                             <tr>
@@ -26,6 +20,7 @@
                                 <th>Patient</th>
                                 <th>Reason</th>
                                 <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody class="font-weight-bold">
@@ -33,13 +28,26 @@
                             <tr>
                                 <td>{{ appointment.date }}</td>
                                 <td>{{ appointment.time }}</td>
-                                <td>Dr. {{ appointment.doctor }}</td>
+                                <td>{{ appointment.doctor }}</td>
                                 <td>{{ appointment.patient|default:"N/A" }}</td>
                                 <td>{{ appointment.reason }}</td>
                                 <td>
-                                    <span class="badge {% if appointment.status == 'confirmed' %} bg-success {% elif appointment.status == 'cancelled' %} bg-danger {% else %} bg-warning {% endif %}">
+                                    <span class="badge {% if appointment.status == 'confirmed' %} bg-success 
+                                                    {% elif appointment.status == 'rejected' %} bg-danger
+                                                    {% elif appointment.status == 'cancelled' %} bg-danger
+                                                    {% elif appointment.status == 'finished' %} bg-secondary
+                                                    {% else %} bg-warning {% endif %}">
                                         {{ appointment.get_status_display }}
                                     </span>
+                                </td>
+                                <td>
+                                    <!-- Show Cancel Button Only if Status is 'confirmed' -->
+                                    {% if appointment.status == 'confirmed' %}
+                                        <form method="POST" action="{% url 'cancel-appointment' appointment.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="badge bg-danger btn-danger">Cancel</button>
+                                        </form>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
@@ -53,6 +61,7 @@
             </div>
         </div>
     </div>
+    {% block dashboard_content %} {% endblock dashboard_content %}
     <!-- Enter Room Form -->
     <div class="row mt-4"> 
         <div class="col-lg-5 mb-lg-0 mb-4">
@@ -79,6 +88,6 @@
                 </div>
             </div>
         </div>
-    {% block dashboard_content %} {% endblock dashboard_content %}
+    <footer class="footer pt-3">
 </div>
 {% endblock containers %}

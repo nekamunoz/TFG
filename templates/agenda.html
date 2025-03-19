@@ -27,7 +27,19 @@
                             {% for slot in agenda %}
                                 <div class="col-md-3 mb-3 d-flex align-items-stretch">
                                     {% if slot in booked_agenda and booked_agenda|get:slot == 'pending' %}
-                                        <div class="card text-center shadow-sm w-100" style="background-color: orange;">
+                                        <div class="card text-center shadow-sm w-100" style="background-color: #fda25c;">
+                                            <div class="card-body d-flex align-items-center justify-content-center">
+                                                <p class="card-text mb-0">{{ slot }}</p>
+                                            </div>
+                                        </div>
+                                    {% elif slot in booked_agenda and booked_agenda|get:slot == 'confirmed' %}
+                                        <div class="card text-center shadow-sm w-100" style="background-color: #66d432;">
+                                            <div class="card-body d-flex align-items-center justify-content-center">
+                                                <p class="card-text mb-0">{{ slot }}</p>
+                                            </div>
+                                        </div>
+                                    {% elif slot in booked_agenda and booked_agenda|get:slot == 'finished' %}
+                                        <div class="card text-center shadow-sm w-100" style="background-color: #dee2e6;">
                                             <div class="card-body d-flex align-items-center justify-content-center">
                                                 <p class="card-text mb-0">{{ slot }}</p>
                                             </div>

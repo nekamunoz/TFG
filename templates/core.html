@@ -30,13 +30,12 @@
                 <li class="nav-item">
                     <a class="nav-link " href="{% url 'agenda'%}">
                             <div class="icon icon-sm border-radius-md text-center mt-1 me-2 d-flex align-items-center justify-content-center">
-                                <i class="fi fi-rr-notebook" style="font-size: 15px;"></i>
+                                <i class="fi fi-rr-calendar" style="font-size: 15px;"></i>
                             </div>
                         <span class="nav-link-text ms-1">Agenda</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                {% elif user.role == 'patient' %}
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link " href="{% url 'appointment'%}">
                             <div class="icon icon-sm border-radius-md text-center mt-1 me-2 d-flex align-items-center justify-content-center">
@@ -46,7 +45,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                {% endif %}
                     <a class="nav-link " href="{% url 'profile'%}">
                             <div class="icon icon-sm border-radius-md text-center mt-1 me-2 d-flex align-items-center justify-content-center">
                                 <i class="fi fi-rr-user" style="font-size: 15px;"></i>
@@ -137,15 +135,6 @@
                 return 0;
             }
         };
-        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-            if (!$('#hideCancelled').is(':checked')) {
-                return true;
-            }
-            
-            // Status is in column 4
-            var status = data[4].toLowerCase();
-            return !status.includes('cancelled');
-        });
         var table = $('#dataTable').DataTable({
             "paging": false,     
             "dom": '<"top"f>rt<"bottom">',
@@ -156,9 +145,6 @@
                 }
             ],
             "order": [[0, 'asc']]  
-        });
-        $('#hideCancelled').on('change', function() {
-            table.draw();
         });
         $('#customSearch').on('keyup', function() {
             table.search(this.value).draw();

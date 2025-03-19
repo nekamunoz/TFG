@@ -2,54 +2,68 @@
 {% load static %} {% load widget_tweaks %} 
 
 {% block dashboard_content %}
-<!-- Pending Confirmations -->
-    <div class="col-lg-7 mb-lg-0 mb-4">
+<div class="row mt-4">
+    <!-- Pending Confirmations -->
+    <div class="col-lg-6 mb-lg-0 mb-4">
         <div class="card z-index-0 shadow-lg">
             <div class="card-header pb-0 p-3">
                 <h6 class="mb-2 mt-2 ms-2">Pending Confirmations ({{ pending_appointments|length }})</h6>
             </div>
             <div class="card-body px-4 py-3">
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="confirm"> 
-                    <div class="table-responsive ms-3 me-3">
-                        <table class="table align-items-center text-xs">
-                            <thead>
-                                <tr>
-                                    <th>Select</th>
-                                    <th>Doctor</th>
-                                    <th>Date</th>
-                                    <th>Reason</th>
-                                </tr>
-                            </thead>
-                            <tbody class="font-weight-bold">
-                                {% for appointment in pending_appointments %}
-                                            <tr>
-                                                <td>
-                                                    <input type="checkbox" name="appointments" value="{{ appointment.id }}">
-                                                </td>  
-                                                <td>Dr. {{ appointment.doctor }}</td>
-                                                <td>{{ appointment.date }}</td>
-                                                <td>{{ appointment.reason }}</td>
-                                            </tr>
-                                {% empty %}
-                                        <tr>
-                                            <td colspan="4" class="text-center">No pending appointments.</td>
-                                        </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% if pending_appointments|length > 0 %}
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-success w-100">Confirm Selected Appointments</button>
-                        </div>
-                    {% endif %}
-                </form>
+                <div class="table-responsive ms-3 me-3">
+                    <table class="table align-items-center text-xs">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <th>Date</th>
+                                <th>Reason</th>
+                                <th>Actions</th> <!-- New column for buttons -->
+                            </tr>
+                        </thead>
+                        <tbody class="font-weight-bold">
+                            {% for appointment in pending_appointments %}
+                            <tr>
+                                <td>Dr. {{ appointment.doctor }}</td>
+                                <td>{{ appointment.date }}</td>
+                                <td>{{ appointment.reason }}</td>
+                                <td>
+                                    <!-- Confirm Button -->
+                                    <form method="POST" action="{% url 'confirm-appointment' appointment.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm">Confirm</button>
+                                    </form>
+                                    <!-- Reject Button -->
+                                    <form method="POST" action="{% url 'reject-appointment' appointment.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No pending appointments.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Appointment Realocation -->
+    <div class="col-lg-6 mb-lg-0 mb-4">
+        <div class="card z-index-0 shadow-lg">
+            <div class="card-header pb-0 p-3">
+                <h6 class="mb-2 mt-2 ms-2">Appointment Realocations </h6>
+            </div>
+            <div class="card-body px-4 py-3">
+                <div class="table-responsive ms-3 me-3">
+                    <table class="table align-items-center text-xs">
+
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
-<!-- End Pending Confirmations -->
-
-{% endblock dashboard_content %}
+{% endblock %}
