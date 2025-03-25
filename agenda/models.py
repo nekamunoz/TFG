@@ -39,41 +39,47 @@ class Agenda(models.Model):
             slots.append(start.time().strftime('%H:%M'))
             start += slot_delta
 
-        booked_slots = Appointment.objects.filter(doctor=self.doctor, date=target_date, status__in=["confirmed", "pending"]) 
+        booked_slots = Appointment.objects.filter(doctor=self.doctor, date=target_date, status__in=["confirmed", "pending"])
 
         return slots, booked_slots
 
-
 class Appointment(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('rejected', 'Rejected'),
+        ('cancelled', 'Cancelled'),
+        ('finished', 'Finished'),
+    ]
+    PRIORITY_CHOICES = [
+        (1, 'Very High'),
+        (2, 'High'),
+        (3, 'Medium'),
+        (4, 'Low'),
+        (5, 'Very Low'),
+    ]
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE) 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
     reason = models.TextField()
-    status = models.CharField(
-        max_length=20,
-        choices=[
-            ('pending', 'Pending'),
-            ('confirmed', 'Confirmed'),
-            ('rejected', 'Rejected'),
-            ('cancelled', 'Cancelled'),
-            ('finished', 'Finished')
-        ],
-        default='pending'
-    )
+    priority = models.IntegerField(choices=PRIORITY_CHOICES, default=5)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    replaces_appointment = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return f'{self.doctor} - {self.patient} - {self.date} {self.time} - {self.status}'
 
     def clean(self):
-        appointment_datetime = datetime.combine(self.date, self.time)  # Convertir a datetime completo
-        time_start = appointment_datetime - timedelta(minutes=29)  # 30 minutos antes
-        time_end = appointment_datetime + timedelta(minutes=29)  # 30 minutos después
+        appointment_datetime = datetime.combine(self.date, self.time)  
+        time_start = appointment_datetime - timedelta(minutes=29)  
+        time_end = appointment_datetime + timedelta(minutes=29)  
 
         overlapping_appointments = Appointment.objects.filter(
-            doctor=self.doctor,  # Filtra por el mismo doctor
-            date=self.date,  # Mismo día
-        ).exclude(id=self.id)  # Excluir la cita actual si se está editando
+            doctor=self.doctor,  
+            date=self.date,  
+            status__in=["confirmed", "pending"] 
+        ).exclude(id=self.id) 
 
         for appointment in overlapping_appointments:
             existing_datetime = datetime.combine(appointment.date, appointment.time)
@@ -81,8 +87,9 @@ class Appointment(models.Model):
                 raise ValidationError(f'El doctor {self.doctor} ya tiene una cita en este horario o dentro de los 30 minutos antes o después.')
 
         overlapping_appointments = Appointment.objects.filter(
-            patient=self.patient,  # Filtra por el mismo paciente
-            date=self.date,  # Mismo día
+            patient=self.patient,  
+            date=self.date, 
+            status__in=["confirmed", "pending"] 
         ).exclude(id=self.id)
 
         for appointment in overlapping_appointments:
@@ -92,7 +99,7 @@ class Appointment(models.Model):
 
 
     def save(self, *args, **kwargs):
-        self.clean()  # Llamar a la validación antes de guardar
+        self.clean() 
         super().save(*args, **kwargs)
 
     @staticmethod
@@ -107,6 +114,14 @@ class Appointment(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['doctor', 'date', 'time'], name='unique_doctor_appointment'),
-            models.UniqueConstraint(fields=['patient', 'date', 'time'], name='unique_patient_appointment'),
+            models.UniqueConstraint(
+                fields=['doctor', 'date', 'time'], 
+                name='unique_doctor_appointment',
+                condition=models.Q(status__in=["confirmed", "pending"])
+            ),
+            models.UniqueConstraint(
+                fields=['patient', 'date', 'time'],
+                name='unique_patient_appointment',
+                condition=models.Q(status__in=["confirmed", "pending"])
+            )
         ]

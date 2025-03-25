@@ -64,11 +64,11 @@ def get_available_slots_by_specialty(selected_specialty, selected_date):
         booked_specialty_slots[agenda.doctor] = {
             appointment.time.strftime('%H:%M') for appointment in appointments_qs
         }
-    
+
     for doctor, slots in specialty_slots.items():
         booked_slots = booked_specialty_slots.get(doctor, set())
         available_slots.update(slots - booked_slots)  
-
+    
     return sorted(list(available_slots))
 
 
@@ -89,7 +89,7 @@ def get_available_doctors_by_specialty_time(selected_specialty, selected_date, s
 
         available_slots = get_available_slots_by_doctor(doctor, selected_date)
 
-        appointments_qs = Appointment.objects.filter(doctor=doctor, date=selected_date)
+        appointments_qs = Appointment.objects.filter(doctor=doctor, date=selected_date, status__in=['confirmed', 'pending'])
         booked_slots = {appointment.time.strftime('%H:%M') for appointment in appointments_qs}
 
         if selected_time in available_slots and selected_time not in booked_slots:

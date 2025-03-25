@@ -2,16 +2,28 @@
 {% load static %} {% load widget_tweaks %} 
 
 {% block dashboard_content %}
+{% if messages %}
+{% endif %}
 <div class="row mt-4">
     <!-- Pending Confirmations -->
-    <div class="col-lg-6 mb-lg-0 mb-4">
+    <div class="col-lg-6  mb-lg-0 mb-4">
+        {% if messages %}
+            {% for message in messages %}
+                {% if "pending" in message.tags %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
         <div class="card z-index-0 shadow-lg">
-            <div class="card-header pb-0 p-3">
+            <div class="card-header pb-0 p-3 text-center">
                 <h6 class="mb-2 mt-2 ms-2">Pending Confirmations ({{ pending_appointments|length }})</h6>
             </div>
             <div class="card-body px-4 py-3">
-                <div class="table-responsive ms-3 me-3">
-                    <table class="table align-items-center text-xs">
+                <div class="table-responsive ms-3 me-3" style="min-height: 300px; max-height: 300x; overflow-y: auto; display: flex; flex-direction: column;">
+                    <table class="table align-items-center text-xs" style="flex-grow: 1;">
                         <thead>
                             <tr>
                                 <th>Doctor</th>
@@ -51,19 +63,66 @@
         </div>
     </div>
     <!-- Appointment Realocation -->
-    <div class="col-lg-6 mb-lg-0 mb-4">
-        <div class="card z-index-0 shadow-lg">
-            <div class="card-header pb-0 p-3">
-                <h6 class="mb-2 mt-2 ms-2">Appointment Realocations </h6>
-            </div>
-            <div class="card-body px-4 py-3">
-                <div class="table-responsive ms-3 me-3">
-                    <table class="table align-items-center text-xs">
-
-                    </table>
+    {% with replacement_appointment=replacement_appointments.0 %}
+    {% if replacement_appointment %}
+        <div class="col-lg-6 mb-lg-0 mb-4">
+            {% if messages %}
+                {% for message in messages %}
+                    {% if "location" in message.tags %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-header pb-0 p-3 text-center">
+                    <h6 class="mb-2 mt-2">Appointment Relocation ({{ replacement_appointments|length }})</h6>
+                </div>
+                <div class="card-body px-4 py-3" style="height: 330px; overflow-y: auto;">
+                    <div class="row">
+                        <!-- Original Appointment Card -->
+                        <div class="col-md-6">
+                            <div class="card border-danger h-100">
+                                <div class="card-body">
+                                    <h6 class="text-danger text-sm"><strong>Original Appointment</strong></h6>
+                                    <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.replaces_appointment.doctor }}</p>
+                                    <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.replaces_appointment.date }}</p>
+                                    <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.replaces_appointment.time }}</p>
+                                    <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.replaces_appointment.reason }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Replacement Appointment Card -->
+                        <div class="col-md-6">
+                            <div class="card border-success h-100">
+                                <div class="card-body">
+                                    <h6 class="text-success text-sm"><strong>Proposed Replacement</strong></h6>
+                                    <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.doctor }}</p>
+                                    <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.date }}</p>
+                                    <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.time }}</p>
+                                    <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.reason }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center mt-4">
+                        <form method="POST" action="{% url 'confirm-appointment' replacement_appointment.id %}" class="me-2">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success btn-lg">Confirm</button>
+                        </form>
+                        <form method="POST" action="{% url 'reject-appointment' replacement_appointment.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-lg">Reject</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    {% else %}
+    {% endif %}
+{% endwith %}
 </div>
 {% endblock %}

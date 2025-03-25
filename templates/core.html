@@ -135,6 +135,15 @@
                 return 0;
             }
         };
+        $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            if (!$('#hideCancelled').is(':checked')) {
+                return true;
+            }
+            
+            // Status is in column 4
+            var status = data[5].toLowerCase();
+            return !status.includes('cancelled') && !status.includes('rejected');
+        });
         var table = $('#dataTable').DataTable({
             "paging": false,     
             "dom": '<"top"f>rt<"bottom">',
@@ -144,7 +153,16 @@
                     "type": "date-custom"
                 }
             ],
-            "order": [[0, 'asc']]  
+            "order": [
+                [0, 'asc'],
+                [1, 'asc']
+            ], 
+        });
+
+        table.draw();
+
+        $('#hideCancelled').on('change', function() {
+            table.draw();
         });
         $('#customSearch').on('keyup', function() {
             table.search(this.value).draw();

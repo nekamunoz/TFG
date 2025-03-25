@@ -25,11 +25,13 @@ def dashboard(request):
     Appointment.cancel_past_pending_appointments()
 
     appointments, template = user_dashboard(request, user)
-    pending_appointments = appointments.filter(status='pending')  
+    pending_appointments = appointments.filter(status='pending', replaces_appointment__isnull=True)
+    replacement_appointments = appointments.filter(status='pending', replaces_appointment__isnull=False)
 
     context = {
         'appointments': appointments.order_by('date'),
         'pending_appointments': pending_appointments,
+        'replacement_appointments': replacement_appointments,
     }
 
     if request.method == 'POST':

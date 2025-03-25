@@ -19,7 +19,6 @@ def appointment(request):
     else:
         specialities = ['General']
 
-    print(selected_specialty)
     available_slots = functions.get_available_slots_by_specialty(selected_specialty, selected_date)
 
     return render(request, 'appointment.html', {
@@ -47,8 +46,12 @@ def create_appointment(request):
             reason = specialty
             patient = get_object_or_404(Patient, user=request.user)
 
-        if Appointment.objects.filter(patient=patient, date=date, time=time).exists():
-            messages.error(request, "You already have an appointment at this time.")
+        existing_appointment = Appointment.objects.filter(
+            patient=patient, date=functions.string_to_date(date), time=functions.string_to_time(time), status__in=["confirmed", "pending"]
+        ).exists()
+
+        if existing_appointment:
+            messages.error(request, "You already have a confirmed or pending appointment at this time.")
             return redirect("appointment")
 
         available_doctors = functions.get_available_doctors_by_specialty_time(specialty, date, time)
@@ -65,7 +68,6 @@ def create_appointment(request):
             time=functions.string_to_time(time),
             reason=reason,
             status=status,
-            specialty=specialty
         )
 
         messages.success(request, "Appointment successfully created!")
