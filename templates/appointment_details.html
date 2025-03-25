@@ -1,0 +1,25 @@
+{% extends 'core.html' %}
+{% load static %} {% load widget_tweaks %} {% load custom_filters %}
+
+{% block containers %}
+<div class="container py-4">
+    <div class="row mt-2 justify-content-center">
+        <div class="col-lg-8 mb-lg-0 mb-4"></div>
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-header pb-0 p-3">
+                    <h4 class="text-center mt-4 mb-4">Appointment's Information</h4>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <p><strong>Doctor:</strong> {{ appointment.doctor.user.get_full_name }}</p>
+                    <p><strong>Patient:</strong> {{ appointment.patient.user.get_full_name }}</p>
+                    <p><strong>Date:</strong> {{ appointment.date }}</p>
+                    <p><strong>Time:</strong> {{ appointment.time }}</p>
+                    <p><strong>Reason:</strong> {{ appointment.reason }}</p>
+                    <p><strong>Status:</strong> {{ appointment.status }}</p>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock containers %}

@@ -1,0 +1,8 @@
+# Archivos de caché de Python
+__pycache__/
+chat/__pycache__/
+base/__pycache__/
+mypage/mypage/__pycache__/
+
+# Base de datos
+db.sqlite3

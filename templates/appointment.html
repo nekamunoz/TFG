@@ -1,0 +1,124 @@
+{% extends 'core.html' %}
+{% load static %} {% load widget_tweaks %} {% load custom_filters %}
+
+{% block containers %}
+<div class="container-fluid py-4">
+    <!-- Agenda Section -->
+    <div class="row mt-2">
+        <div class="col-lg-12 mb-lg-0 mb-4">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-header pb-0 p-3">
+                    <h4 class="text-center mt-4 mb-4">Available Appointments for {{ selected_date }}</h4>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <form method="GET">
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-4">
+                                <select name="selected_specialty" class="form-control" required>
+                                    <option value="">Select a Specialty</option>
+                                    {% for speciality in specialities %}
+                                        <option value="{{ speciality }}" 
+                                            {% if speciality == selected_specialty %} selected {% endif %}>
+                                            {{ speciality }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="date" name="selected_date" class="form-control" value="{{ selected_date|date:'Y-m-d' }}" required>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit" class="btn btn-primary">Show Slots</button>
+                            </div>
+                        </div>
+                    </form>
+                    <form method="POST" action="{% url 'create_appointment' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="selected_specialty" id="selected_specialty" value="{{ selected_specialty }}">
+                        <input type="hidden" name="selected_date" id="selected_date" value="{{ selected_date|date:'Y-m-d' }}">
+                        <input type="hidden" name="selected_slot" id="selected_slot">
+                        {% if user.role == 'doctor' %}
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-6">
+                                <select name="patient" id="patient" class="form-control" required>
+                                    <option value="">Select a Patient</option>
+                                    {% for patient in patients %}
+                                        <option value="{{ patient.id }}">{{ patient.user.get_full_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-6">
+                                <label for="reason" class="form-label">Reason for Appointment</label>
+                                <textarea name="reason" id="reason" class="form-control" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row justify-content-center mb-3">
+                            {% if agenda %}
+                                {% for slot in agenda %}
+                                    <div class="col-md-3 mb-3 d-flex align-items-stretch">
+                                        <div class="card text-center shadow-sm w-100 slot-card" data-slot="{{ slot }}">
+                                            <div class="card-body d-flex align-items-center justify-content-center">
+                                                <p class="card-text mb-0">{{ slot }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col-12 text-center">
+                                    <p class="mb-0">No available appointments for this day.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-4">
+                                <button type="submit" class="btn btn-success w-100" id="confirmButton" disabled>
+                                    Create Appointment
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const slotCards = document.querySelectorAll(".slot-card");
+    const selectedSlotInput = document.getElementById("selected_slot");
+    const confirmButton = document.getElementById("confirmButton");
+
+    slotCards.forEach(card => {
+        card.addEventListener("click", function () {
+            // Remove previous selections
+            slotCards.forEach(c => c.classList.remove("bg-primary", "text-white", "border-primary"));
+
+            // Add selection styles
+            this.classList.add("bg-primary", "text-white", "border-primary");
+
+            // Save the selected slot
+            selectedSlotInput.value = this.getAttribute("data-slot");
+
+            console.log("Selected slot:", selectedSlotInput.value);
+
+            // Enable the Confirm Appointment button
+            confirmButton.removeAttribute("disabled");
+        });
+    });
+});
+
+</script>
+</style>
+{% endblock containers %}

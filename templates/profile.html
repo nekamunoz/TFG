@@ -1,0 +1,26 @@
+{% extends 'core.html' %}
+{% load static %} {% load widget_tweaks %}
+
+{% block containers %}
+<div class="container-fluid py-4">
+    <!-- Time Slots Section -->
+    <div class="row mt-4"> 
+        <div class="col-lg-12 mb-lg-0 mb-4">
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-body px-4 py-3">
+                    <div class="d-flex align-items-center">
+                        <div class="avatar avatar-xl position-relative me-3">
+                            <img src="{% static 'img/default-profile.png' %}" alt="profile_image" class="w-80 border-radius-lg shadow-sm">
+                        </div>
+                        <div>
+                            <h5 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h5>
+                            <p class="mb-0 font-weight-bold text-sm">{{ user.role }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Time Slots Section -->
+</div>
+{% endblock containers %}
