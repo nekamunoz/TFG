@@ -1,5 +1,21 @@
 from pathlib import Path
 
+
+
+# Configuración de Celery
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "appbio148@gmail.com"
+EMAIL_HOST_PASSWORD = "swjs mxky oemf eygp"
+DEFAULT_FROM_EMAIL = "appbio148@gmail.com"
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -12,6 +28,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'django_celery_beat',
     'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
