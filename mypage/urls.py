@@ -6,4 +6,5 @@ urlpatterns = [
     path('', include('base.urls')),
     path('chat/', include('chat.urls')),
     path('agenda/', include('agenda.urls')),
+    path('videochat/', include('videochat.urls')),
 ]

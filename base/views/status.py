@@ -8,15 +8,24 @@ def confirm_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
 
     if appointment.status == 'pending':
+        appointment.status = 'confirmed'        
+        appointment.save()
+        messages.success(request, "Appointment confirmed successfully.", extra_tags="success pending")
+            
+    elif appointment.status == 'replacement':
         appointment.status = 'confirmed'
 
         if appointment.replaces_appointment:
             cancel_appointment(request, appointment.replaces_appointment.id)
 
         appointment.save()
-        messages.success(request, "Appointment confirmed successfully!", extra_tags="success pending")
+        messages.success(request, "Appointment replaced successfully.", extra_tags="success replacement")
+
     else:
-        messages.error(request, "Appointment cannot be confirmed.")
+        if appointment.status == 'pending':
+            messages.warning(request, "Appointment cannot be confirmed.", extra_tags="warning pending")
+        elif appointment.status == 'replacement':
+            messages.warning(request, "Appointment cannot be confirmed.", extra_tags="warning replacement")
 
     return redirect('dashboard')
 
@@ -28,9 +37,19 @@ def reject_appointment(request, appointment_id):
         appointment.save()
         
         find_later_confirmed_appointments(appointment)
-        messages.success(request, "Appointment rejected successfully!")
+        messages.success(request, "Appointment rejected.", extra_tags="success reject-pending")
+
+    elif appointment.status == 'replacement':
+        appointment.status = 'rejected'
+        appointment.save()
+        find_later_confirmed_appointments(appointment)
+        messages.success(request, "Rejected replacement appointment.", extra_tags="success reject-replacement")
+        
     else:
-        messages.error(request, "Appointment cannot be rejected.")
+        if appointment.status == 'pending':
+            messages.warning(request, "Appointment cannot be rejected.", extra_tags="warning reject-pending")
+        elif appointment.status == 'replacement':
+            messages.warning(request, "Appointment cannot be rejected.", extra_tags="warning reject-replacement")
 
     return redirect('dashboard')
 
@@ -42,9 +61,10 @@ def cancel_appointment(request, appointment_id):
         appointment.save()
 
         find_later_confirmed_appointments(appointment)
-        messages.success(request, "Appointment cancelled successfully!")
+        messages.success(request, "Appointment cancelled successfully.", extra_tags="success cancel")
+
     else:
-        messages.error(request, "Appointment cannot be cancelled.")
+        messages.error(request, "Appointment cannot be cancelled.", extra_tags="success cancel")
 
     return redirect('dashboard')
 
@@ -58,10 +78,10 @@ def change_priority(request, appointment_id):
             if new_priority in dict(Appointment.PRIORITY_CHOICES).keys():
                 appointment.priority = new_priority
                 appointment.save()
-                messages.success(request, "Priority changed successfully!")
+                messages.success(request, "Priority changed successfully.", extra_tags="success priority")
             else:
-                messages.error(request, "Invalid priority value.")
+                messages.warning(request, "Invalid priority value.", extra_tags="warning priority")
         else:
-            messages.error(request, "Priority must be a number.")
+            messages.warning(request, "Priority must be a number.", extra_tags="warning priority")
 
     return redirect('dashboard')

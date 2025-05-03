@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
-from ..models import Agenda, Appointment
+from ..models import Appointment
 from base.models import Doctor, Patient
 from django.contrib.auth.decorators import login_required
 
@@ -36,6 +36,7 @@ def create_appointment(request):
         date = request.POST.get("selected_date")
         time = request.POST.get("selected_slot")
         reason = request.POST.get("reason")
+        priority = request.POST.get("priority")
         patient = request.POST.get("patient")
 
         if request.user.role == "doctor":
@@ -44,6 +45,7 @@ def create_appointment(request):
         else:
             status = 'confirmed'
             reason = specialty
+            priority = 5
             patient = get_object_or_404(Patient, user=request.user)
 
         existing_appointment = Appointment.objects.filter(
@@ -51,12 +53,12 @@ def create_appointment(request):
         ).exists()
 
         if existing_appointment:
-            messages.error(request, "You already have a confirmed or pending appointment at this time.")
+            messages.warning(request, "Patient has confirmed or pending appointment at this time.", extra_tags="warning error")
             return redirect("appointment")
 
         available_doctors = functions.get_available_doctors_by_specialty_time(specialty, date, time)
         if not available_doctors:
-            messages.error(request, "No doctor available for this slot.")
+            messages.warning(request, "No doctor available for this slot.", extra_tags="warning error")
             return redirect("appointment")
 
         doctor = functions.select_doctor(available_doctors, date)
@@ -66,11 +68,10 @@ def create_appointment(request):
             patient=patient,
             date=functions.string_to_date(date),
             time=functions.string_to_time(time),
-            reason=reason,
+            reason=reason if reason else f"Referred from {doctor.user.first_name}",
+            priority=priority,
             status=status,
         )
-
-        messages.success(request, "Appointment successfully created!")
         return redirect("appointment_details", appointment_id=appointment.id)
 
     return redirect("appointment")
@@ -78,6 +79,7 @@ def create_appointment(request):
 @login_required
 def appointment_details(request, appointment_id):
     appointment = Appointment.objects.get(id=appointment_id)
+    print(appointment.time)
     return render(request, "appointment_details.html", {"appointment": appointment})
 
 

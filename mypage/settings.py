@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'base',
     'agenda',
     'chat',
+    'videochat',
     'channels',
     'widget_tweaks'
 ]
@@ -89,7 +90,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
 TIME_ZONE = 'Europe/Paris'
 USE_TZ = True

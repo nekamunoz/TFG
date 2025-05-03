@@ -4,19 +4,20 @@
 {% block containers %}
 <div class="container py-4">
     <div class="row mt-2 justify-content-center">
-        <div class="col-lg-8 mb-lg-0 mb-4"></div>
+        <div class="col-lg-10 mb-lg-0 mb-4">
             <div class="card z-index-0 shadow-lg">
                 <div class="card-header pb-0 p-3">
-                    <h4 class="text-center mt-4 mb-4">Appointment's Information</h4>
+                    <h4 class="text-center mt-4 mb-2">Appointment's Information</h4>
                 </div>
-                <div class="card-body px-4 py-3">
+                <div class="card-body px-5 ">
                     <p><strong>Doctor:</strong> {{ appointment.doctor.user.get_full_name }}</p>
                     <p><strong>Patient:</strong> {{ appointment.patient.user.get_full_name }}</p>
                     <p><strong>Date:</strong> {{ appointment.date }}</p>
-                    <p><strong>Time:</strong> {{ appointment.time }}</p>
+                    <p><strong>Time:</strong> {{ appointment.time|time:"H:i" }}</p>
                     <p><strong>Reason:</strong> {{ appointment.reason }}</p>
+                    <p><strong>Priority:</strong> {{ appointment.priority }}</p>
                     <p><strong>Status:</strong> {{ appointment.status }}</p>
-                    <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+                    <a href="{% url 'dashboard' %}" class="mb-4 btn btn-primary">Back to Dashboard</a>
                 </div>
             </div>
         </div>

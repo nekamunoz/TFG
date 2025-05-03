@@ -26,7 +26,7 @@ def dashboard(request):
 
     appointments, template = user_dashboard(request, user)
     pending_appointments = appointments.filter(status='pending', replaces_appointment__isnull=True)
-    replacement_appointments = appointments.filter(status='pending', replaces_appointment__isnull=False)
+    replacement_appointments = appointments.filter(status='replacement', replaces_appointment__isnull=False)
 
     context = {
         'appointments': appointments.order_by('date'),

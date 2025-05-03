@@ -3,15 +3,16 @@
 
 {% block containers %}
 <div class="container-fluid py-4">
-    <!-- Agenda Section -->
-    <div class="row mt-2">
+    <div class="row mt-4">
         <div class="col-lg-12 mb-lg-0 mb-4">
             {% if messages %}
                 {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
+                    {% if "error" in message.tags %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% endif %}
             <div class="card z-index-0 shadow-lg">
@@ -58,8 +59,19 @@
                         </div>
                         <div class="row justify-content-center mb-4">
                             <div class="col-md-6">
-                                <label for="reason" class="form-label">Reason for Appointment</label>
-                                <textarea name="reason" id="reason" class="form-control" rows="3" required></textarea>
+                                <select name="priority" id="priority" class="form-control" required>
+                                    <option value="">Select Priority</option>
+                                    <option value="1">Very High</option>
+                                    <option value="2">High</option>
+                                    <option value="3">Medium</option>
+                                    <option value="4">Low</option>
+                                    <option value="5">Very Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row justify-content-center mb-4">
+                            <div class="col-md-6">
+                                <textarea name="reason" id="reason" class="form-control" rows="3" placeholder="Enter reason for appointment"></textarea>
                             </div>
                         </div>
                         {% endif %}

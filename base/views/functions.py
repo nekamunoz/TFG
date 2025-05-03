@@ -9,6 +9,8 @@ def find_later_confirmed_appointments(appointment):
                 status="confirmed"
             ).filter(
                 Q(date__gt=appointment.date) | Q(date=appointment.date, time__gt=appointment.time)
+            ).exclude(
+                patient=appointment.patient 
             ).order_by('priority', 'date', 'time')
 
     if later_appointments.exists():
@@ -21,7 +23,7 @@ def find_later_confirmed_appointments(appointment):
             time=appointment.time,
             reason=later_appointment.reason,
             priority=later_appointment.priority,
-            status="pending",
+            status="replacement",
             replaces_appointment=later_appointment
         )
 

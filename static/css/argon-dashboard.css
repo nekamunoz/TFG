@@ -3157,7 +3157,9 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked[type=checkbox] {
-  --bs-form-check-bg-image: linear-gradient(310deg, #5e72e4 0%, #825ee4 100%);
+  --bs-form-check-bg-image: none; /* Remove gradient */
+  background-color: #62728c; /* Solid color */
+  border-color: #000; /* Black border */
 }
 
 .form-check-input:checked[type=radio] {
@@ -5936,7 +5938,6 @@ fieldset:disabled .btn {
   top: 0;
   right: 0;
   z-index: 2;
-  padding: 1.25rem 1rem;
 }
 
 .alert-primary {
@@ -21457,10 +21458,12 @@ fieldset:disabled .btn {
 */
 .alert-primary {
   background-image: linear-gradient(310deg, #5e72e4 0%, rgb(102.8723404255, 59.0595744681, 222.1404255319) 100%);
+  line-height: 1;
 }
 
 .alert-secondary {
   background-image: linear-gradient(310deg, #627594 0%, rgb(139.8285714286, 161.0095238095, 203.3714285714) 100%);
+  line-height: 1;
 }
 
 .alert-success {
@@ -21470,10 +21473,12 @@ fieldset:disabled .btn {
 
 .alert-info {
   background-image: linear-gradient(310deg, #1171ef 0%, rgb(13.5559055118, 172.8377952756, 201.6440944882) 100%);
+  line-height: 1;
 }
 
 .alert-warning {
   background-image: linear-gradient(310deg, #fb6340 0%, rgb(250.1630769231, 160.68, 24.0369230769) 100%);
+  line-height: 1;
 }
 
 .alert-danger {
@@ -21483,18 +21488,16 @@ fieldset:disabled .btn {
 
 .alert-light {
   background-image: linear-gradient(310deg, #CED4DA 0%, rgb(208.6774193548, 217.9419354839, 229.5225806452) 100%);
+  line-height: 1;
 }
 
 .alert-dark {
   background-image: linear-gradient(310deg, #212229 0%, rgb(14.8054054054, 16.6, 18.3945945946) 100%);
+  line-height: 1;
 }
 
 .btn-close:focus {
   box-shadow: none;
-}
-
-.alert-dismissible .btn-close {
-  background-image: none;
 }
 
 .alert {

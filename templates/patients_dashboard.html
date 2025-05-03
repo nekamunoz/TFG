@@ -1,128 +1,238 @@
-{% extends 'dashboard.html' %}
+{% extends 'core.html' %}
 {% load static %} {% load widget_tweaks %} 
 
-{% block dashboard_content %}
-{% if messages %}
-{% endif %}
-<div class="row mt-4">
-    <!-- Pending Confirmations -->
-    <div class="col-lg-6  mb-lg-0 mb-4">
-        {% if messages %}
-            {% for message in messages %}
-                {% if "pending" in message.tags %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
+{% block containers %}
+<div class="container-fluid">
+    <div class="row mt-4">
+        <div class="col-lg-12 mb-lg-0 mb-4">
+            <div class="card px-4 py-3">
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if "cancel" in message.tags %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
-            {% endfor %}
-        {% endif %}
-        <div class="card z-index-0 shadow-lg">
-            <div class="card-header pb-0 p-3 text-center">
-                <h6 class="mb-2 mt-2 ms-2">Pending Confirmations ({{ pending_appointments|length }})</h6>
-            </div>
-            <div class="card-body px-4 py-3">
-                <div class="table-responsive ms-3 me-3" style="min-height: 300px; max-height: 300x; overflow-y: auto; display: flex; flex-direction: column;">
-                    <table class="table align-items-center text-xs" style="flex-grow: 1;">
+                <div class="card-header pb-0 p-3 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-4">Appointments</h6>
+                </div>
+                <div class="table-responsive ms-3 me-3" style="max-height: 350px; overflow-y: auto;">
+                    <table class="table align-items-center text-xs" style="text-align: center" id="dataTable">
                         <thead>
                             <tr>
-                                <th>Doctor</th>
                                 <th>Date</th>
+                                <th>Time</th>
+                                <th>Doctor</th>
+                                <th>Patient</th>
                                 <th>Reason</th>
-                                <th>Actions</th> <!-- New column for buttons -->
+                                <th>Status</th>
+                                <th></th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody class="font-weight-bold">
-                            {% for appointment in pending_appointments %}
+                            {% for appointment in appointments %}
                             <tr>
-                                <td>Dr. {{ appointment.doctor }}</td>
                                 <td>{{ appointment.date }}</td>
+                                <td>{{ appointment.time|time:"H:i" }}</td>
+                                <td>{{ appointment.doctor }}</td>
+                                <td>{{ appointment.patient|default:"N/A" }}</td>
                                 <td>{{ appointment.reason }}</td>
                                 <td>
-                                    <!-- Confirm Button -->
-                                    <form method="POST" action="{% url 'confirm-appointment' appointment.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-success btn-sm">Confirm</button>
-                                    </form>
-                                    <!-- Reject Button -->
-                                    <form method="POST" action="{% url 'reject-appointment' appointment.id %}" style="display:inline;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
-                                    </form>
+                                    <span class="badge {% if appointment.status == 'confirmed' %} bg-success 
+                                                    {% elif appointment.status == 'rejected' %} bg-danger
+                                                    {% elif appointment.status == 'cancelled' %} bg-danger
+                                                    {% elif appointment.status == 'finished' %} bg-secondary
+                                                    {% else %} bg-warning {% endif %}">
+                                        {{ appointment.get_status_display }}
+                                    </span>
+                                </td>
+                                <th></th>
+                                <td>
+                                    {% if appointment.status == 'confirmed' %}
+                                        <form method="POST" action="{% url 'cancel-appointment' appointment.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-xs btn-danger">Cancel</button>
+                                        </form>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center">No pending appointments.</td>
+                                <td colspan="5" class="text-center">No appointments found.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+                <div class="card-header pb-0 p-3 d-flex justify-content-between align-items-center">
+                    <div class="form-check mb-0">
+                        <input class="form-check-input" type="checkbox" id="hideCancelled" checked>
+                        <label class="form-check-label" for="hideCancelled">
+                            Hide cancelled appointments
+                        </label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Appointment Realocation -->
-    {% with replacement_appointment=replacement_appointments.0 %}
-    {% if replacement_appointment %}
+    <div class="row mt-4">
+        <!-- Pending Confirmations -->
         <div class="col-lg-6 mb-lg-0 mb-4">
-            {% if messages %}
-                {% for message in messages %}
-                    {% if "location" in message.tags %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
             <div class="card z-index-0 shadow-lg">
-                <div class="card-header pb-0 p-3 text-center">
-                    <h6 class="mb-2 mt-2">Appointment Relocation ({{ replacement_appointments|length }})</h6>
+                <div class="card-header pb-0 p-3">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if "pending" in message.tags or "reject-pending" in message.tags %}
+                                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <h6 class="mb-2 mt-2 ms-3">Pending Confirmations ({{ pending_appointments|length }})</h6>
                 </div>
-                <div class="card-body px-4 py-3" style="height: 330px; overflow-y: auto;">
-                    <div class="row">
-                        <!-- Original Appointment Card -->
-                        <div class="col-md-6">
-                            <div class="card border-danger h-100">
-                                <div class="card-body">
-                                    <h6 class="text-danger text-sm"><strong>Original Appointment</strong></h6>
-                                    <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.replaces_appointment.doctor }}</p>
-                                    <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.replaces_appointment.date }}</p>
-                                    <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.replaces_appointment.time }}</p>
-                                    <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.replaces_appointment.reason }}</p>
+                <div class="card-body px-4 py-3">
+                    {% if pending_appointments %}
+                        <div class="table-responsive ms-3 me-3" style="max-height: 300px; overflow-y: auto; display: flex; flex-direction: column;">
+                            <table class="table align-items-center text-xs" style="flex-grow: 1; text-align: center">
+                                <thead>
+                                    <tr>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="font-weight-bold">
+                                    {% for appointment in pending_appointments %}
+                                    <tr>
+                                        <td>Dr. {{ appointment.doctor }}</td>
+                                        <td>{{ appointment.date }}</td>
+                                        <td>{{ appointment.time|time:"H:i"}}</td>
+                                        <td>
+                                            <!-- Confirm Button -->
+                                            <form method="POST" action="{% url 'confirm-appointment' appointment.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-success btn-sm">Confirm</button>
+                                            </form>
+                                            <!-- Reject Button -->
+                                            <form method="POST" action="{% url 'reject-appointment' appointment.id %}" style="display:inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center">No pending appointments.</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <p>No pending appointments available.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>        
+        <!-- Appointment Realocation -->
+        {% with replacement_appointment=replacement_appointments.0 %}
+        <div class="col-lg-6 mb-lg-0 mb-4">
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-header pb-0 p-3">
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if "replacement" in message.tags or "reject-replacement" in message.tags %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    <h6 class="mb-2 mt-2 ms-3">Appointment Relocation ({{ replacement_appointments|length }})</h6>
+                </div>
+                {% if replacement_appointments %}
+                    <div class="card-body px-4 py-3" style="height: 330px; overflow-y: auto;">
+                        <div class="row">
+                            <!-- Original Appointment Card -->
+                            <div class="col-md-6">
+                                <div class="card border-danger h-100">
+                                    <div class="card-body">
+                                        <h6 class="text-danger text-sm"><strong>Original Appointment</strong></h6>
+                                        <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.replaces_appointment.doctor }}</p>
+                                        <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.replaces_appointment.date }}</p>
+                                        <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.replaces_appointment.time|time:"H:i" }}</p>
+                                        <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.replaces_appointment.reason }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Replacement Appointment Card -->
+                            <div class="col-md-6">
+                                <div class="card border-success h-100">
+                                    <div class="card-body">
+                                        <h6 class="text-success text-sm"><strong>Proposed Replacement</strong></h6>
+                                        <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.doctor }}</p>
+                                        <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.date }}</p>
+                                        <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.time|time:"H:i" }}</p>
+                                        <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.reason }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Replacement Appointment Card -->
-                        <div class="col-md-6">
-                            <div class="card border-success h-100">
-                                <div class="card-body">
-                                    <h6 class="text-success text-sm"><strong>Proposed Replacement</strong></h6>
-                                    <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.doctor }}</p>
-                                    <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.date }}</p>
-                                    <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.time }}</p>
-                                    <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.reason }}</p>
-                                </div>
-                            </div>
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <form method="POST" action="{% url 'confirm-appointment' replacement_appointment.id %}" class="me-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-lg">Confirm</button>
+                            </form>
+                            <form method="POST" action="{% url 'reject-appointment' replacement_appointment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-lg">Reject</button>
+                            </form>
                         </div>
                     </div>
-                    <!-- Action Buttons -->
-                    <div class="d-flex justify-content-center mt-4">
-                        <form method="POST" action="{% url 'confirm-appointment' replacement_appointment.id %}" class="me-2">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-success btn-lg">Confirm</button>
-                        </form>
-                        <form method="POST" action="{% url 'reject-appointment' replacement_appointment.id %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger btn-lg">Reject</button>
-                        </form>
+                {% else %}
+                    <div class="card-body px-4 py-3 text-center">
+                        <p>No replacements proposed.</p>
                     </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endwith %}
+    <div class="row mt-4"> 
+        <div class="col-lg-5 mb-lg-0 mb-4">
+            <div class="card z-index-0 shadow-lg">
+                <div class="card-header pb-0 p-3">
+                    <h6 class="mb-2 mt-2 ms-2">Enter an Appointment</h6>
+                </div>
+                <div class="card-body px-4 py-3">
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="room">
+                        <div class="form-group mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Username" name="username" required>
+                        </div>
+                        <div class="form-group mb-5">
+                            <label for="room" class="form-label">Room name</label>
+                            <input type="text" class="form-control" id="room" placeholder="Room name" name="room" required>
+                        </div>
+                        <div class="text-center my-3">
+                            <button type="submit" class="btn btn-primary w-100">Submit</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    {% else %}
-    {% endif %}
-{% endwith %}
+    <footer class="footer pt-3">
 </div>
-{% endblock %}
+{% endblock containers %}

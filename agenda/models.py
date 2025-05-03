@@ -22,6 +22,8 @@ class Agenda(models.Model):
 
         if weekday not in self.weekly_schedule:
             return [], []  # No availability for this day
+        if not self.weekly_schedule[weekday]:
+            return [], []
 
         start_time_str = self.weekly_schedule[weekday].get('start', '09:00')
         end_time_str = self.weekly_schedule[weekday].get('end', '16:00')
@@ -49,6 +51,7 @@ class Appointment(models.Model):
         ('confirmed', 'Confirmed'),
         ('rejected', 'Rejected'),
         ('cancelled', 'Cancelled'),
+        ('replacement', 'Replacement'),
         ('finished', 'Finished'),
     ]
     PRIORITY_CHOICES = [
@@ -62,7 +65,7 @@ class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
-    reason = models.TextField()
+    reason = models.TextField(default="Not specified")
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=5)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     replaces_appointment = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
