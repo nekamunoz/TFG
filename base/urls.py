@@ -1,6 +1,6 @@
 from django.urls import path
 from .views.base import signin, signup, signout, profile
-from .views.dashboard import dashboard
+from .views.dashboard import dashboard, videochat
 from .views.status import confirm_appointment, reject_appointment, cancel_appointment, change_priority
 
 urlpatterns = [
@@ -13,4 +13,5 @@ urlpatterns = [
     path('confirm-appointment/<int:appointment_id>/', confirm_appointment, name='confirm-appointment'),
     path('reject-appointment/<int:appointment_id>/', reject_appointment, name='reject-appointment'),
     path('cancel-appointment/<int:appointment_id>/', cancel_appointment, name='cancel-appointment'),
+    path('videochat/<int:appointment_id>/', videochat, name='video-chat'),
 ]

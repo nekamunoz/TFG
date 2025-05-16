@@ -1,9 +1,15 @@
-var usernameInput = document.querySelector("#username");
-var btnJoin = document.querySelector("#btn-join");
-
+const username = document.body.dataset.username;
 var mapPeers = {};
-var username;
 var webSocket;
+var localStream = new MediaStream();
+const constraints = {
+    'video': true,
+    'audio': true
+}
+
+const localVideo = document.querySelector("#local-video");
+const btnToggleAudio = document.querySelector("#btn-toggle-audio");
+const btnToggleVideo = document.querySelector("#btn-toggle-video");
 
 function webSocketOnMessage(event) {
     var parsedData = JSON.parse(event.data);
@@ -32,58 +38,6 @@ function webSocketOnMessage(event) {
     }
 }
 
-btnJoin.addEventListener("click", ()=> { // Stablish a new WebSocket connection
-    username = usernameInput.value;
-
-    if (username.length < 1) {
-        alert("Please enter a username.");
-        return;
-    }
-    usernameInput.value = '';
-    usernameInput.disabled = true;
-    usernameInput.style.visibility = "hidden";
-
-    btnJoin.disabled = true;
-    btnJoin.style.visibility = "hidden";
-
-    var labelUsername = document.querySelector("#label-username");
-    labelUsername.innerHTML = "Welcome " + username + "!";
-
-    var loc = window.location;
-    var wsStart = 'ws://';
-
-    if(loc.protocol == "https:") {
-        wsStart = 'wss://';
-    }
-
-    var endpoint = wsStart + loc.host + loc.pathname;
-
-    webSocket = new WebSocket(endpoint);
-
-    webSocket.addEventListener("open", (event) => {
-        console.log("Connection opened!", event);
-        sendSignal('new-peer',{})
-    });
-    webSocket.addEventListener("message", webSocketOnMessage);
-    webSocket.addEventListener("close", (event) => {
-        console.log("Connection closed!", event);
-    });
-    webSocket.addEventListener("error", (event) => {
-        console.log("Error", event);
-    });
-});
-
-var localStream = new MediaStream();
-const constraints = {
-    'video': true,
-    'audio': true
-}
-
-const localVideo = document.querySelector("#local-video");
-
-const btnToggleAudio = document.querySelector("#btn-toggle-audio");
-const btnToggleVideo = document.querySelector("#btn-toggle-video");
-
 var userMedia = navigator.mediaDevices.getUserMedia(constraints)
     .then(stream => {
         localStream = stream;
@@ -111,12 +65,19 @@ var userMedia = navigator.mediaDevices.getUserMedia(constraints)
     });
 
 function sendSignal(action, message){
+    const currentUsername = username || "anonymous";
+    
     var jsonStr = JSON.stringify({
-        'peer': username,
+        'peer': currentUsername,
         'action': action,
         "message": message,
     });
-    webSocket.send(jsonStr);     
+    
+    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(jsonStr);
+    } else {
+        console.error("WebSocket not connected. Cannot send message.");
+    }
 }
 
 function createOfferer(peerUsername, receiver_channel_name){
@@ -178,8 +139,10 @@ function createVideo(peerUsername){
     remoteVideo.id = peerUsername + '-video';
     remoteVideo.autoplay = true;
     remoteVideo.playsInline = true;
+    remoteVideo.classList.add("rounded");
 
     var videoWrapper = document.createElement('div');
+    videoWrapper.className = "video-wrapper";  
 
     videoContainer.appendChild(videoWrapper);
     videoWrapper.appendChild(remoteVideo);
@@ -250,3 +213,24 @@ function createAnswerer(offer, peerUsername, receiver_channel_name){
             peer.setLocalDescription(answer);
         });
 }
+
+// Event Listeners
+document.addEventListener("DOMContentLoaded", function () {
+    var loc = window.location;
+    var wsStart = loc.protocol === "https:" ? "wss://" : "ws://";
+    var endpoint = wsStart + loc.host + loc.pathname;
+    console.log(endpoint)
+    webSocket = new WebSocket(endpoint);
+
+    webSocket.addEventListener("open", (event) => {
+        console.log("Connection opened!", event);
+        sendSignal('new-peer',{});
+    });
+    webSocket.addEventListener("message", webSocketOnMessage);
+    webSocket.addEventListener("close", (event) => {
+        console.log("Connection closed!", event);
+    });
+    webSocket.addEventListener("error", (event) => {
+        console.log("Error", event);
+    });
+});

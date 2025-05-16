@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %} {% load widget_tweaks %}
+{% block content %} 
+
+<body data-username="{{request.user}}" data-roomid="{{room_id}}">
+    <div class="container mt-5">
+        <div class="text-center mb-4">
+            <h2 id="roomname" class="display-6 d-none">{{room_id}}</h2>
+            <h2 id="username" class="display-6 d-none">{{request.user}}</h2>
+        </div>
+        <!-- Control Buttons -->
+        <div id="video-controls" class="mt-3 d-flex justify-content-center gap-2">
+            <button id="btn-toggle-audio" class="btn btn-outline-secondary">
+                <i class="fas fa-microphone"></i> Audio Mute
+            </button>
+            <button id="btn-toggle-video" class="btn btn-outline-secondary">
+                <i class="fas fa-video"></i> Video Off
+            </button>
+        </div>
+        <!-- Responsive Video Grid -->
+        <div id="video-container" class="video-grid-container mt-4">
+            <div class="video-wrapper">
+                <video id="local-video" class="rounded" autoplay playsinline></video>
+            </div>
+        </div>
+        <!-- Transcription Container -->
+        <div id="transcription-container" class="mt-3 p-3 border rounded bg-light" style="display: none;">
+            <h5>Transcription</h5>
+            <div id="transcription"></div>
+        </div>
+        <!-- Chat Container -->
+        <div id="chat-container" class="mt-3 p-3 border rounded bg-light">
+            <h5>Transcription</h5>
+            <div id="chat-messages" style="min-height: 100px; max-height: 300px; overflow-y: auto;"></div>
+            <button id="btn-start-recognition" class="btn btn-secondary">Recognition On</button>
+            <button id="btn-export-conversation" class="btn btn-primary">Export Conversation</button>
+        </div>
+        <script type="module" src="{% static 'js/videochat.js' %}"></script>
+        <script src="{% static 'js/text.js' %}?v={{ timestamp }}"></script>
+    </div>
+</body>
+<style>
+    .video-grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        justify-items: center;
+        align-items: center;
+        padding: 1rem;
+        width: 100%;
+    }
+    
+    .video-wrapper {
+        width: 100%;
+        position: relative;
+        padding-top: 56.25%;
+    }
+    
+    .video-wrapper video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    #transcription {
+        min-height: 50px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock content %}

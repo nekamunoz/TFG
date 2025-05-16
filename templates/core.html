@@ -127,11 +127,16 @@
     $(document).ready(function() {
         $.fn.dataTable.ext.type.order['date-custom-pre'] = function(d) {
             try {
-                var parts = d.split(', ');
-                var datePart = parts[0];
-                var timePart = parts[1];
-                return new Date(datePart + ' ' + timePart).getTime();
+                var dateObj = new Date(d);
+                
+                if (isNaN(dateObj.getTime())) {
+                    console.log("Invalid date:", d);
+                    return 0;
+                }
+                
+                return dateObj.getTime();
             } catch(e) {
+                console.error("Date parsing error:", e, "for input:", d);
                 return 0;
             }
         };
@@ -141,7 +146,7 @@
             }
             
             // Status is in column 4
-            var status = data[5].toLowerCase();
+            var status = data[4].toLowerCase();
             return !status.includes('cancelled') && !status.includes('rejected');
         });
         var table = $('#dataTable').DataTable({
@@ -158,9 +163,7 @@
                 [1, 'asc']
             ], 
         });
-
         table.draw();
-
         $('#hideCancelled').on('change', function() {
             table.draw();
         });

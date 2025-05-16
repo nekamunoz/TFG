@@ -26,11 +26,10 @@
                                 <th>Date</th>
                                 <th>Time</th>
                                 <th>Doctor</th>
-                                <th>Patient</th>
                                 <th>Reason</th>
                                 <th>Status</th>
-                                <th></th>
                                 <th>Actions</th>
+                                <th>Meeting</th>
                             </tr>
                         </thead>
                         <tbody class="font-weight-bold">
@@ -39,7 +38,6 @@
                                 <td>{{ appointment.date }}</td>
                                 <td>{{ appointment.time|time:"H:i" }}</td>
                                 <td>{{ appointment.doctor }}</td>
-                                <td>{{ appointment.patient|default:"N/A" }}</td>
                                 <td>{{ appointment.reason }}</td>
                                 <td>
                                     <span class="badge {% if appointment.status == 'confirmed' %} bg-success 
@@ -50,7 +48,6 @@
                                         {{ appointment.get_status_display }}
                                     </span>
                                 </td>
-                                <th></th>
                                 <td>
                                     {% if appointment.status == 'confirmed' %}
                                         <form method="POST" action="{% url 'cancel-appointment' appointment.id %}" style="display:inline;">
@@ -59,6 +56,15 @@
                                         </form>
                                     {% endif %}
                                 </td>
+                                <th>
+                                    {% if appointment.status == 'confirmed' %}
+                                        <form method="POST" action="{% url 'video-chat' appointment.id %} " style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="join-videochat">
+                                            <button type="submit" class="btn btn-xs">Join</button>
+                                        </form>
+                                    {% endif %}
+                                </th>
                             </tr>
                             {% empty %}
                             <tr>

@@ -45,3 +45,7 @@ def dashboard(request):
             return redirect('room', room_name=get_room.room_name, username=username)
         
     return render(request, template, context)
+
+def videochat(request, appointment_id):
+    print(f"Joining room: {appointment_id} by user {request.user}")
+    return render(request, 'videochat.html', {'room_id': appointment_id})
