@@ -46,21 +46,10 @@ class Agenda(models.Model):
         return slots, booked_slots
 
 class Appointment(models.Model):
-    STATUS_CHOICES = [
-        ('pending', 'Pending'),
-        ('confirmed', 'Confirmed'),
-        ('rejected', 'Rejected'),
-        ('cancelled', 'Cancelled'),
-        ('replacement', 'Replacement'),
-        ('finished', 'Finished'),
-    ]
-    PRIORITY_CHOICES = [
-        (1, 'Very High'),
-        (2, 'High'),
-        (3, 'Medium'),
-        (4, 'Low'),
-        (5, 'Very Low'),
-    ]
+    STATUS_CHOICES = [('pending', 'Pending'), ('confirmed', 'Confirmed'), ('rejected', 'Rejected'),
+                ('cancelled', 'Cancelled'), ('replacement', 'Replacement'), ('finished', 'Finished')]
+    PRIORITY_CHOICES = [(1, 'Very High'), (2, 'High'), (3, 'Medium'), (4, 'Low'), (5, 'Very Low')]
+    
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE) 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     date = models.DateField()

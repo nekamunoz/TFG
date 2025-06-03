@@ -8,7 +8,7 @@ SECRET_KEY = 'django-insecure-2#s&uk=id-vl$j4l4)e90$&yx-%nu$vo7jq_ffnmyu_1lrc=k&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
@@ -21,10 +21,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'base',
     'agenda',
-    'chat',
     'videochat',
     'channels',
-    'widget_tweaks'
+    'widget_tweaks',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -37,7 +37,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'mypage.urls'
+ROOT_URLCONF = 'app.urls'
 
 TEMPLATES = [
     {
@@ -55,8 +55,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'mypage.wsgi.application'
-ASGI_APPLICATION = "mypage.asgi.application"
+WSGI_APPLICATION = 'app.wsgi.application'
+ASGI_APPLICATION = "app.asgi.application"
 
 CHANNEL_LAYERS = {
     "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},

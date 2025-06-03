@@ -19,7 +19,7 @@
                 <div class="card-header pb-0 p-3 d-flex justify-content-between align-items-center">
                     <h6 class="mb-4">Appointments</h6>
                 </div>
-                <div class="table-responsive ms-3 me-3" style="max-height: 350px; overflow-y: auto;">
+                <div class="table-responsive ms-3 me-3" style="max-height: 500px; overflow-y: auto;">
                     <table class="table align-items-center text-xs" style="text-align: center" id="dataTable">
                         <thead>
                             <tr>
@@ -214,31 +214,6 @@
             </div>
         </div>
     {% endwith %}
-    <div class="row mt-4"> 
-        <div class="col-lg-5 mb-lg-0 mb-4">
-            <div class="card z-index-0 shadow-lg">
-                <div class="card-header pb-0 p-3">
-                    <h6 class="mb-2 mt-2 ms-2">Enter an Appointment</h6>
-                </div>
-                <div class="card-body px-4 py-3">
-                    <form method="POST" action="">
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="room">
-                        <div class="form-group mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Username" name="username" required>
-                        </div>
-                        <div class="form-group mb-5">
-                            <label for="room" class="form-label">Room name</label>
-                            <input type="text" class="form-control" id="room" placeholder="Room name" name="room" required>
-                        </div>
-                        <div class="text-center my-3">
-                            <button type="submit" class="btn btn-primary w-100">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     <footer class="footer pt-3">
 </div>
 {% endblock containers %}

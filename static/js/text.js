@@ -114,25 +114,53 @@ function exportConversation() {
         return;
     }
 
+    // Get the room ID from the body tag
+    const appointmentId = document.body.dataset.roomid;
+
     const text = conversation.map(entry => 
-        `[${entry.timestamp}] ${entry.speaker}: ${entry.message}`
+        `${entry.speaker}: ${entry.message}`
     ).join('\n');
 
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'conversation.txt';
-    a.click();
-    URL.revokeObjectURL(url);
+    fetch(`/videochat/${appointmentId}/save_conversation/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRFToken(),
+        },
+        body: JSON.stringify({ text }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert('Conversation saved! ID: ' + data.id);
+        } else {
+            alert('Error saving conversation.');
+        }
+    })
+    .catch(error => {
+        console.error('Save failed:', error);
+        alert('Network or server error.');
+    });
+}
+
+function getCSRFToken() {
+    const cookieValue = document.cookie
+        .split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+    return cookieValue;
 }
 
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     var loc = window.location;
-    var wsStart = loc.protocol === "https:" ? "wss://" : "ws://";
-    var endpoint = wsStart + loc.host + "/text/" + roomid + "/";
+    var serverIP = "192.168.0.108";
+    var port = "8000"; 
+    var wsStart = "wss://"; 
+    var endpoint = wsStart + serverIP + ":" + "/text/" + roomid + "/";
+
+    console.log("Attempting connection to:", endpoint);
     chatSocket = new WebSocket(endpoint);
 
     // Set up WebSocket handlers

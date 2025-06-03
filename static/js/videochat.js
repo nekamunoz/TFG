@@ -217,9 +217,12 @@ function createAnswerer(offer, peerUsername, receiver_channel_name){
 // Event Listeners
 document.addEventListener("DOMContentLoaded", function () {
     var loc = window.location;
-    var wsStart = loc.protocol === "https:" ? "wss://" : "ws://";
-    var endpoint = wsStart + loc.host + loc.pathname;
-    console.log(endpoint)
+    var serverIP = "192.168.0.108";
+    var port = "8000"; 
+    var wsStart = "wss://"; 
+    var endpoint = wsStart + serverIP + ":" + port + loc.pathname;
+
+    console.log("Attempting connection to:", endpoint);
     webSocket = new WebSocket(endpoint);
 
     webSocket.addEventListener("open", (event) => {

@@ -79,7 +79,6 @@ def create_appointment(request):
 @login_required
 def appointment_details(request, appointment_id):
     appointment = Appointment.objects.get(id=appointment_id)
-    print(appointment.time)
     return render(request, "appointment_details.html", {"appointment": appointment})
 
 
