@@ -10,12 +10,13 @@
         </div>
         <!-- Control Buttons -->
         <div id="video-controls" class="mt-3 d-flex justify-content-center gap-2">
-            <button id="btn-toggle-audio" class="btn btn-outline-secondary">
+            <button id="btn-toggle-audio" class="btn btn-primary">
                 <i class="fas fa-microphone"></i> Audio Mute
             </button>
-            <button id="btn-toggle-video" class="btn btn-outline-secondary">
+            <button id="btn-toggle-video" class="btn btn-primary">
                 <i class="fas fa-video"></i> Video Off
             </button>
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
         </div>
         <!-- Responsive Video Grid -->
         <div id="video-container" class="video-grid-container mt-4">
