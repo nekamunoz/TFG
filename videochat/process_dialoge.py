@@ -22,14 +22,14 @@ def summarize_medical_conversation(conversation):
     Here's the conversation:
     {conversation}
     """
-    
+    print(f"Executing model {model}")
     response = client.generate(model=model, prompt=prompt)
+    print(f"Model {model} executed successfully")
     return response.response
 
 
 # Example usage
 if __name__ == "__main__":
-    # Sample conversation - replace with actual doctor-patient conversation
     doctor_patient_conversation = """
     Doctor: Good morning, what brings you in today?
     Patient: I've been having severe headaches for the past week, and they're getting worse.

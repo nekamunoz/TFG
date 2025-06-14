@@ -41,22 +41,6 @@ def videochat(request, appointment_id=None):
     print(f"Joining room: {appointment_id} by user {request.user}")
     return render(request, 'videochat.html', {'room_id': appointment_id})
 
-def process_dialogue(request, appointment_id=None):
-    appointment = Appointment.objects.get(pk=appointment_id)
-    conversation = Conversation.objects.get(appointment=appointment)
-    
-    if request.method == 'POST':
-        try:
-            if not conversation.processed_dialogue:
-                print(f"Processing conversation for appointment {appointment_id}")
-                conversation.processed_dialogue = summarize_medical_conversation(conversation.dialogue)
-                conversation.save(update_fields=['processed_dialogue'])
-                return redirect('appointment_notes', appointment_id=appointment_id)
-        except Exception as e:
-            print(f"Error processing conversation: {e}")
-            
-    return redirect('appointment_notes', appointment_id=appointment_id)
-
 def appointment_notes(request, appointment_id=None):
     appointment = Appointment.objects.get(pk=appointment_id)
     conversation = Conversation.objects.get(appointment=appointment)
