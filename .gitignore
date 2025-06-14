@@ -6,3 +6,5 @@ mypage/mypage/__pycache__/
 
 # Base de datos
 db.sqlite3
+
+.venv
