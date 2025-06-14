@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime
-from ..models import Agenda, Appointment
-from core.models import Doctor
+
+from .models import Agenda, Appointment
+from ..core.models import Doctor
 
 def string_to_time(time_str):
     """Converts a time string to a time object."""

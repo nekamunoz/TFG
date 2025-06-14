@@ -1,6 +1,6 @@
-from django.urls import path, include
-from .views.agenda import agenda
-from .views.appointment import appointment, create_appointment, appointment_details
+from django.urls import path
+
+from .views import agenda, appointment, create_appointment, appointment_details
 
 urlpatterns = [
     path('agenda/', agenda, name='agenda'),

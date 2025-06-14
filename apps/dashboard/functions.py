@@ -1,6 +1,5 @@
-from appointment.models import Appointment
+from ..appointment.models import Appointment
 from django.db.models import Q
-
 
 def find_later_confirmed_appointments(appointment):
     """Finds the first later confirmed appointment and creates a replacement."""

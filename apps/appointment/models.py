@@ -1,13 +1,10 @@
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-from apps.core.models import Doctor, Patient
+from ..core.models import Doctor, Patient
 
-from datetime import datetime, timedelta
-from django.db import models
-from datetime import timedelta
 
 class Agenda(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)

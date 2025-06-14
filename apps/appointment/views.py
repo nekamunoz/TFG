@@ -1,17 +1,33 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-
-from ..models import Appointment
-from core.models import Doctor, Patient
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
-from . import functions
+from .functions import get_selected_date, get_slots_and_booked, get_available_slots_by_specialty, get_available_doctors_by_specialty_time, select_doctor, string_to_date, string_to_time
+from .models import Agenda, Appointment
+from ..core.models import Doctor, Patient
+
+@login_required
+def agenda(request):
+    """ Displays the doctor's agenda for the selected date."""
+    selected_date = request.POST.get('selected_date')
+    selected_date = get_selected_date(selected_date)
+
+    doctor = get_object_or_404(Doctor, user=request.user)
+    doctor_agenda = Agenda.objects.filter(doctor=doctor).first()
+
+    slots, booked_slots = get_slots_and_booked(doctor_agenda, selected_date)
+
+    return render(request, 'agenda.html', {
+        'selected_date': selected_date,
+        'agenda': slots,
+        'booked_agenda': booked_slots
+    })
 
 @login_required
 def appointment(request):
     selected_specialty = request.GET.get('selected_specialty', '')
     selected_date = request.GET.get('selected_date', '')
-    selected_date = functions.get_selected_date(selected_date)
+    selected_date = get_selected_date(selected_date)
     patients = Patient.objects.all()
 
     if request.user.role == 'doctor':
@@ -19,7 +35,7 @@ def appointment(request):
     else:
         specialities = ['General']
 
-    available_slots = functions.get_available_slots_by_specialty(selected_specialty, selected_date)
+    available_slots = get_available_slots_by_specialty(selected_specialty, selected_date)
 
     return render(request, 'appointment.html', {
         'specialities': specialities,
@@ -49,25 +65,25 @@ def create_appointment(request):
             patient = get_object_or_404(Patient, user=request.user)
 
         existing_appointment = Appointment.objects.filter(
-            patient=patient, date=functions.string_to_date(date), time=functions.string_to_time(time), status__in=["confirmed", "pending"]
+            patient=patient, date=string_to_date(date), time=string_to_time(time), status__in=["confirmed", "pending"]
         ).exists()
 
         if existing_appointment:
             messages.warning(request, "Patient has confirmed or pending appointment at this time.", extra_tags="warning error")
             return redirect("appointment")
 
-        available_doctors = functions.get_available_doctors_by_specialty_time(specialty, date, time)
+        available_doctors = get_available_doctors_by_specialty_time(specialty, date, time)
         if not available_doctors:
             messages.warning(request, "No doctor available for this slot.", extra_tags="warning error")
             return redirect("appointment")
 
-        doctor = functions.select_doctor(available_doctors, date)
+        doctor = select_doctor(available_doctors, date)
 
         appointment = Appointment.objects.create(
             doctor=doctor,
             patient=patient,
-            date=functions.string_to_date(date),
-            time=functions.string_to_time(time),
+            date=string_to_date(date),
+            time=string_to_time(time),
             reason=reason if reason else f"Referred from {doctor.user.first_name}",
             priority=priority,
             status=status,
@@ -80,5 +96,3 @@ def create_appointment(request):
 def appointment_details(request, appointment_id):
     appointment = Appointment.objects.get(id=appointment_id)
     return render(request, "appointment_details.html", {"appointment": appointment})
-
-
