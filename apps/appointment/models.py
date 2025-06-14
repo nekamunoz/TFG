@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-from base.models import Doctor, Patient
+from apps.core.models import Doctor, Patient
 
 from datetime import datetime, timedelta
 from django.db import models

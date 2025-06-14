@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 import threading
-from agenda.models import Appointment
-from videochat.process_dialoge import summarize_medical_conversation
+from apps.appointment.models import Appointment
+from apps.teleconsult.process_dialoge import summarize_medical_conversation
 
 def process_conversation(conversation):
     try:

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from base.models import CustomUser
+from core.models import CustomUser
 
 class CustomRegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30)

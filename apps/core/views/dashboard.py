@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
-from agenda.models import Appointment
-from videochat.process_dialoge import summarize_medical_conversation
+from appointment.models import Appointment
+from teleconsult.process_dialoge import summarize_medical_conversation
 
 
 def user_dashboard(request, user):
@@ -51,7 +51,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 import json
-from videochat.models import Conversation
+from teleconsult.models import Conversation
 
 @require_POST
 @ensure_csrf_cookie

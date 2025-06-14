@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from base.models import Doctor
+from core.models import Doctor
 from ..models import Agenda
 from django.contrib.auth.decorators import login_required
 

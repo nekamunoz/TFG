@@ -1,4 +1,4 @@
-from agenda.models import Appointment
+from appointment.models import Appointment
 from django.db.models import Q
 
 
