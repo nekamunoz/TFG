@@ -8,3 +8,6 @@ mypage/mypage/__pycache__/
 db.sqlite3
 
 .venv
+cert.perm
+key.perm
+staticfiles

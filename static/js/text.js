@@ -155,7 +155,7 @@ function getCSRFToken() {
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
     var loc = window.location;
-    var serverIP = "192.168.0.108";
+    var serverIP = "192.168.1.188";
     var port = "8000"; 
     var wsStart = "wss://"; 
     var endpoint = wsStart + serverIP + ":" + "/text/" + roomid + "/";

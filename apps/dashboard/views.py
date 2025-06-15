@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from ..appointment.models import Appointment
 
 def user_dashboard(request, user):
+    if not user.is_authenticated:
+        return None, 'redirect'
     if user.role == 'patient':
         appointments = Appointment.objects.filter(patient__user=user)
         template = 'patients_dashboard.html'
@@ -23,6 +25,10 @@ def dashboard(request):
     Appointment.finish_past_confirmed_appointments()
 
     appointments, template = user_dashboard(request, user)
+
+    if template == 'redirect':
+        return redirect('sign-in')
+
     pending_appointments = appointments.filter(status='pending', replaces_appointment__isnull=True)
     replacement_appointments = appointments.filter(status='replacement', replaces_appointment__isnull=False)
 
