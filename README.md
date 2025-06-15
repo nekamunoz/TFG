@@ -1,7 +1,3 @@
-### Progreso:
-05/02
-Añadido tipo de usuario a Usuario.
-Añadida una pagina de prueba login.
+### Commands:
 
-18/02
-Creado un chat usando django channels.
+daphne -e ssl:8000:privateKey=key.pem:certKey=cert.pem config.asgi:application
