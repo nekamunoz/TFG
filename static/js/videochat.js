@@ -1,4 +1,6 @@
 const username = document.body.dataset.username;
+const serverIp = document.body.dataset.server;
+const port = document.body.dataset.port;
 var mapPeers = {};
 var offerPeers = {};
 var webSocket;
@@ -261,10 +263,8 @@ function createAnswerer(offer, peerUsername, receiver_channel_name) {
 // Event Listeners
 document.addEventListener("DOMContentLoaded", function () {
     var loc = window.location;
-    var serverIP = "192.168.1.188";
-    var port = "8000";
     var wsStart = "wss://";
-    var endpoint = wsStart + serverIP + ":" + port + loc.pathname;
+    var endpoint = wsStart + serverIp + ":" + port + loc.pathname;
 
 	
     console.log("Attempting connection to:", endpoint);

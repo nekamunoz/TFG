@@ -2,12 +2,8 @@
 {% load static %} {% load widget_tweaks %}
 {% block content %} 
 
-<body data-username="{{request.user}}" data-roomid="{{room_id}}">
+<body data-username="{{request.user}}" data-roomid="{{room_id}}" data-server="{{serverIp}}" data-port="{{port}}">
     <div class="container mt-5">
-        <div class="text-center mb-4">
-            <h2 id="roomname" class="display-6 d-none">{{room_id}}</h2>
-            <h2 id="username" class="display-6 d-none">{{request.user}}</h2>
-        </div>
         <!-- Control Buttons -->
         <div id="video-controls" class="mt-3 d-flex justify-content-center gap-2">
             <button id="btn-toggle-audio" class="btn btn-primary">

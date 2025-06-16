@@ -40,9 +40,11 @@ def dashboard(request):
         
     return render(request, template, context)
 
+from config.config import serverIp, port
+
 def videochat(request, appointment_id=None):
     print(f"Joining room: {appointment_id} by user {request.user}")
-    return render(request, 'videochat.html', {'room_id': appointment_id})
+    return render(request, 'videochat.html', {'room_id': appointment_id, 'serverIp': serverIp, 'port': port})
 
 def appointment_notes(request, appointment_id=None):
     appointment = Appointment.objects.get(pk=appointment_id)

@@ -1,5 +1,7 @@
 const username = document.body.dataset.username;
 const roomid = document.body.dataset.roomid;
+const serverIp = document.body.dataset.server;
+const port = document.body.dataset.port;
 const chatMessages = document.getElementById('chat-messages');
 var chatSocket;
 let lastSentMessage = '';
@@ -154,11 +156,8 @@ function getCSRFToken() {
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
-    var loc = window.location;
-    var serverIP = "192.168.1.188";
-    var port = "8000"; 
     var wsStart = "wss://"; 
-    var endpoint = wsStart + serverIP + ":" + "/text/" + roomid + "/";
+    var endpoint = wsStart + serverIp + ":" + port  + "/text/" + roomid + "/";
 
     console.log("Attempting connection to:", endpoint);
     chatSocket = new WebSocket(endpoint);
