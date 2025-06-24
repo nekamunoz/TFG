@@ -78,9 +78,12 @@
                     <div class="form-check mb-0">
                         <input class="form-check-input" type="checkbox" id="hideCancelled" checked>
                         <label class="form-check-label" for="hideCancelled">
-                            Hide cancelled appointments
+                            Show confirmed and pending appointments only
                         </label>
                     </div>
+                    <a href="{% url 'create_appointment' %}" class="text-sm d-flex align-items-center text-decoration-none">
+                        <i class="fi fi-rr-plus me-1"></i> Book a new appointment
+                    </a>
                 </div>
             </div>
         </div>

@@ -124,7 +124,13 @@
         '/dashboard/': 'Dashboard',
         '/profile/': 'Profile',
         '/appointment/': 'Appointments',
+        '/agenda/': 'Agenda',
     };
+    if (breadcrumbMapping[currentPath]) {
+        breadcrumb.textContent = breadcrumbMapping[currentPath];
+    } else {
+        console.warn('No breadcrumb mapping found for:', currentPath);
+    }
 
     $(document).ready(function() {
         $.fn.dataTable.ext.type.order['date-custom-pre'] = function(d) {

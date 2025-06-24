@@ -5,17 +5,13 @@ var mapPeers = {};
 var offerPeers = {};
 var webSocket;
 var localStream = new MediaStream();
-const constraints = {
-    video: true,
-    audio: true
-};
+const constraints = {video: true, audio: true};
 let localStreamReady = false;
 let flag = true;
 
 const localVideo = document.querySelector("#local-video");
 const btnToggleAudio = document.querySelector("#btn-toggle-audio");
 const btnToggleVideo = document.querySelector("#btn-toggle-video");
-
 
 function waitForLocalStream() {
     return new Promise((resolve) => {
@@ -43,8 +39,6 @@ async function webSocketOnMessage(event) {
     }
 
     var receiver_channel_name = parsedData['message']['receiver_channel_name'];
-	console.log("------ mensaje---------", action, username, peerUsername, receiver_channel_name);
-	console.log(mapPeers);
 		if (action === 'new-peer' && peerUsername !== username) {
 				createOfferer(peerUsername, receiver_channel_name);
 			return;
@@ -58,7 +52,7 @@ async function webSocketOnMessage(event) {
 		if (action === 'new-answer') {
 			var answer = parsedData['message']['sdp'];
 			var peer = mapPeers[peerUsername][0];
-			// CORRECCIÓN: Usar RTCSessionDescription para setRemoteDescription
+
 			peer.setRemoteDescription(new RTCSessionDescription(answer))
 			.then(() => {
 				console.log("Respuesta remota aplicada correctamente:", peerUsername);
@@ -104,8 +98,6 @@ function sendSignal(action, message) {
         action: action,
         message: message,
     });
-	//console.log("---- SE LE ENVIA AL SERVIDOR ----");
-	//console.log(action, message, currentUsername);
 
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(jsonStr);
@@ -127,7 +119,6 @@ function createOfferer(peerUsername, receiver_channel_name) {
 
     var remoteVideo = createVideo(peerUsername);
     setOnTrack(peer, remoteVideo);
-	//console.log("--PEEEEEEEER offerer-", peerUsername);
     mapPeers[peerUsername] = [peer, dc];
 
     peer.addEventListener('iceconnectionstatechange', () => {
@@ -146,8 +137,6 @@ function createOfferer(peerUsername, receiver_channel_name) {
 
     peer.addEventListener('icecandidate', (event) => {
         if (event.candidate) {
-            // Aquí podrías enviar candidatos ICE si quieres (opcional)
-            //console.log('New ICE candidate:', event.candidate);
             return;
         }
         sendSignal('new-offer', {
@@ -192,7 +181,6 @@ function setOnTrack(peer, remoteVideo) {
     remoteVideo.srcObject = remoteStream;
 
     peer.addEventListener('track', event => {
-        console.log("🔊 Se recibió pista remota:", event.track.kind);
         remoteStream.addTrack(event.track);
     });
 }
@@ -259,13 +247,11 @@ function createAnswerer(offer, peerUsername, receiver_channel_name) {
         });
 }
 
-
 // Event Listeners
 document.addEventListener("DOMContentLoaded", function () {
     var loc = window.location;
     var wsStart = "wss://";
     var endpoint = wsStart + serverIp + ":" + port + loc.pathname;
-
 	
     console.log("Attempting connection to:", endpoint);
     webSocket = new WebSocket(endpoint);
