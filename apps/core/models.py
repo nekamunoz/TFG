@@ -38,7 +38,7 @@ class Patient(models.Model):
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         if instance.role == 'doctor':
-            Doctor.objects.create(user=instance, specialty="General")  # Default specialty
+            Doctor.objects.create(user=instance, specialty="Family Medicine")  # Default specialty
         elif instance.role == 'patient':
             Patient.objects.create(user=instance, birth_date="2000-01-01")  # Default birth date
     else:

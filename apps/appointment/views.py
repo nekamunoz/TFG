@@ -31,9 +31,9 @@ def appointment(request):
     patients = Patient.objects.all()
 
     if request.user.role == 'doctor':
-        specialities = Doctor.objects.values_list('specialty', flat=True).distinct()
+        specialities = ['Dermatology','Ophthalmology', 'Cardiology', 'Neurology', 'Gynecology', 'Urology', 'Psychiatry', 'Oncology']
     else:
-        specialities = ['General']
+        specialities = ['Family Medicine', 'Nursing', 'Dentistry', 'Social Work']
 
     available_slots = get_available_slots_by_specialty(selected_specialty, selected_date)
 
@@ -60,7 +60,7 @@ def create_appointment(request):
             patient = get_object_or_404(Patient, id=patient)
         else:
             status = 'confirmed'
-            reason = specialty
+            reason = 'Patient Booking'
             priority = 5
             patient = get_object_or_404(Patient, user=request.user)
 
@@ -84,7 +84,7 @@ def create_appointment(request):
             patient=patient,
             date=string_to_date(date),
             time=string_to_time(time),
-            reason=reason if reason else f"Referred from {doctor.user.first_name}",
+            reason=reason if reason else f"Referred",
             priority=priority,
             status=status,
         )

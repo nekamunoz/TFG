@@ -2,8 +2,8 @@
 {% load static %} {% load widget_tweaks %} {% load custom_filters %}
 
 {% block containers %}
-<div class="container-fluid py-4">
-    <div class="row mt-4">
+<div class="container-fluid pb-4">
+    <div class="row">
         <div class="col-lg-12 mb-lg-0 mb-4">
             {% if messages %}
                 {% for message in messages %}
@@ -26,10 +26,7 @@
                                 <select name="selected_specialty" class="form-control" required>
                                     <option value="">Select a Specialty</option>
                                     {% for speciality in specialities %}
-                                        <option value="{{ speciality }}" 
-                                            {% if speciality == selected_specialty %} selected {% endif %}>
-                                            {{ speciality }}
-                                        </option>
+                                        <option value="{{ speciality }}">{{ speciality }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -96,7 +93,8 @@
                         <div class="row justify-content-center mb-4">
                             <div class="col-md-4">
                                 <button type="submit" class="btn btn-success w-100" id="confirmButton" disabled>
-                                    Create Appointment
+                                    {% if user.role == 'doctor' %} Schedule Appointment {% else %}
+                                    Confirm Appointment {% endif %}
                                 </button>
                             </div>
                         </div>

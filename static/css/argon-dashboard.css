@@ -3134,6 +3134,7 @@ textarea.form-control-lg {
 }
 
 .form-check-input[type=checkbox] {
+  transform: scale(0.8);
   border-radius: 0.35rem;
 }
 
@@ -3157,8 +3158,9 @@ textarea.form-control-lg {
 }
 
 .form-check-input:checked[type=checkbox] {
+  transform: scale(0.8);
   --bs-form-check-bg-image: none; /* Remove gradient */
-  background-color: #62728c; /* Solid color */
+  background-color: #a7afde; /* Solid color */
   border-color: #000; /* Black border */
 }
 

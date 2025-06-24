@@ -155,7 +155,7 @@
             
             // Status is in column 4
             var status = data[4].toLowerCase();
-            return !status.includes('cancelled') && !status.includes('rejected') && !status.includes('finished');
+            return !status.includes('cancelled') && !status.includes('rejected') && !status.includes('finished') && !status.includes('replacement');
         });
         var table = $('#dataTable').DataTable({
             "paging": false,     
