@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from datetime import date 
 
 from ..appointment.models import Appointment
 
@@ -36,6 +37,7 @@ def dashboard(request):
         'appointments': appointments.order_by('date'),
         'pending_appointments': pending_appointments,
         'replacement_appointments': replacement_appointments,
+        'today': date(2025, 7, 28)
     }
         
     return render(request, template, context)

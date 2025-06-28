@@ -72,7 +72,7 @@
                                     {% endif %}
                                 </td>
                                 <th>
-                                    {% if appointment.status == 'confirmed' %}
+                                    {% if appointment.status == 'confirmed' and appointment.date == today  %}
                                         <form method="POST" action="{% url 'video-chat' appointment.id %} " style="display:inline;">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="join-videochat">

@@ -57,7 +57,7 @@
                                     {% endif %}
                                 </td>
                                 <th>
-                                    {% if appointment.status == 'confirmed' %}
+                                    {% if appointment.status == 'confirmed' and appointment.date == today  %}
                                         <form method="POST" action="{% url 'video-chat' appointment.id %} " style="display:inline;">
                                             {% csrf_token %}
                                             <input type="hidden" name="action" value="join-videochat">
@@ -121,7 +121,7 @@
                                 <tbody class="font-weight-bold">
                                     {% for appointment in pending_appointments %}
                                     <tr>
-                                        <td>Dr. {{ appointment.doctor }}</td>
+                                        <td>{{ appointment.doctor }}</td>
                                         <td>{{ appointment.date }}</td>
                                         <td>{{ appointment.time|time:"H:i"}}</td>
                                         <td>
@@ -178,7 +178,7 @@
                                 <div class="card border-danger h-100">
                                     <div class="card-body">
                                         <h6 class="text-danger text-sm"><strong>Original Appointment</strong></h6>
-                                        <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.replaces_appointment.doctor }}</p>
+                                        <p class="text-sm"><strong>Doctor:</strong> {{ replacement_appointment.replaces_appointment.doctor }}</p>
                                         <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.replaces_appointment.date }}</p>
                                         <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.replaces_appointment.time|time:"H:i" }}</p>
                                         <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.replaces_appointment.reason }}</p>
@@ -190,7 +190,7 @@
                                 <div class="card border-success h-100">
                                     <div class="card-body">
                                         <h6 class="text-success text-sm"><strong>Proposed Replacement</strong></h6>
-                                        <p class="text-sm"><strong>Doctor:</strong> Dr. {{ replacement_appointment.doctor }}</p>
+                                        <p class="text-sm"><strong>Doctor:</strong> {{ replacement_appointment.doctor }}</p>
                                         <p class="text-sm"><strong>Date:</strong> {{ replacement_appointment.date }}</p>
                                         <p class="text-sm"><strong>Time:</strong> {{ replacement_appointment.time|time:"H:i" }}</p>
                                         <p class="text-sm"><strong>Reason:</strong> {{ replacement_appointment.reason }}</p>

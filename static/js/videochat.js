@@ -169,9 +169,13 @@ function createVideo(peerUsername) {
 
     var videoWrapper = document.createElement('div');
     videoWrapper.className = "video-wrapper";
+    var videoLabel = document.createElement('div');
+    videoLabel.className = "video-label";
+    videoLabel.textContent = peerUsername;
 
     videoContainer.appendChild(videoWrapper);
     videoWrapper.appendChild(remoteVideo);
+    videoWrapper.appendChild(videoLabel);
 
     return remoteVideo;
 }
