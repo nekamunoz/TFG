@@ -76,9 +76,29 @@ navigator.mediaDevices.getUserMedia(constraints)
         audioTracks[0].enabled = true;
         videoTracks[0].enabled = true;
 
+        // Initialize transcription since audio starts enabled
+        setTimeout(() => {
+            if (window.transcriptionAudioEnabled) {
+                window.transcriptionAudioEnabled();
+            }
+        }, 1000);
+
         btnToggleAudio.addEventListener("click", () => {
             audioTracks[0].enabled = !audioTracks[0].enabled;
             btnToggleAudio.innerHTML = audioTracks[0].enabled ? "Audio Mute" : "Audio Unmute";
+            
+            // Control transcription based on audio state
+            if (audioTracks[0].enabled) {
+                // Audio is now enabled, start transcription
+                if (window.transcriptionAudioEnabled) {
+                    window.transcriptionAudioEnabled();
+                }
+            } else {
+                // Audio is now disabled, stop transcription
+                if (window.transcriptionAudioDisabled) {
+                    window.transcriptionAudioDisabled();
+                }
+            }
         });
 
         btnToggleVideo.addEventListener("click", () => {

@@ -1,6 +1,5 @@
 import ollama
 
-
 def summarize_medical_conversation(conversation):
     client = ollama.Client()
     model = "llama2"
