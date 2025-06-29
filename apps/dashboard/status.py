@@ -60,7 +60,8 @@ def cancel_appointment(request, appointment_id):
         appointment.status = 'cancelled'
         appointment.save()
 
-        find_later_confirmed_appointments(appointment)
+        if request.user.role == 'patient':
+            find_later_confirmed_appointments(appointment)
         messages.success(request, "Appointment cancelled successfully.", extra_tags="success cancel")
 
     else:
