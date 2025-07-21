@@ -9,7 +9,7 @@
         <div class="col-lg-6 mb-lg-0 mb-4 d-flex">
             <div class="card flex-fill">
                 <div class="card-header pb-0 p-3">
-                    <h5 class="mb-0 text-center py-3">Raw Conversation</h5>
+                    <h5 class="mb-0 text-center py-3">Raw Transcript</h5>
                 </div>
                 <div class="card-body px-4 py-3">
                     {{ conversation.dialogue|linebreaksbr }}
@@ -20,15 +20,15 @@
         <div class="col-lg-6 mb-lg-0 mb-4 d-flex">
             <div class="card flex-fill">
                 <div class="card-header pb-0 p-3">
-                    <h5 class="mb-0 text-center py-3">Transcription</h5>
+                    <h5 class="mb-0 text-center py-3">Generated Medical Notes</h5>
                 </div>
                 <div class="card-body px-4 py-3">
                     {% if conversation.processed_dialogue %}
                         {{ conversation.processed_dialogue|linebreaksbr|safe }}
                     {% else %}
-                        <div class="alert alert-warning" role="alert">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Transcription is not available yet. Please check back later.
+                        <div class="d-flex align-items-center pb-4" role="alert">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Loading transcription, please wait...
                         </div>
                     {% endif %}
                 </div>

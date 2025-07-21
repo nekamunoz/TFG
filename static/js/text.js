@@ -177,20 +177,31 @@ function updateRecordingUI() {
     
     if (isRecording) {
         if (recordingButton) {
-            recordingButton.textContent = 'Stop Recording';
+            recordingButton.textContent = 'Stop Saving';
             recordingButton.className = 'btn btn-danger';
         }
         // Add visual indicator for all users
         if (!document.getElementById('recording-indicator')) {
             const indicator = document.createElement('div');
             indicator.id = 'recording-indicator';
-            indicator.className = 'alert alert-warning mt-2';
-            indicator.innerHTML = '<i class="fas fa-record-vinyl"></i> Recording in progress...';
+            indicator.className = 'd-flex align-items-center gap-2 py-2 px-3';
+            indicator.innerHTML = `
+                <span style="
+                    width: 12px;
+                    height: 12px;
+                    background-color: red;
+                    border-radius: 50%;
+                    display: inline-block;
+                    animation: pulse 1s infinite;
+                "></span>
+                <strong>Saving trascribed audio...</strong>
+            `;
+
             document.getElementById('chat-container').insertBefore(indicator, document.getElementById('chat-messages'));
         }
     } else {
         if (recordingButton) {
-            recordingButton.textContent = 'Start Recording';
+            recordingButton.textContent = 'Start Saving';
             recordingButton.className = 'btn btn-primary';
         }
         // Remove visual indicator
@@ -311,12 +322,24 @@ document.addEventListener('DOMContentLoaded', () => {
                             const speaker = message.substring(0, colonIndex);
                             const text = message.substring(colonIndex + 2);
                             
+                            // Determine if this message is from the current user or another user
+                            const isOwnMessage = speaker === username;
+                            
                             // Only save to conversation if recording is active
                             if (isRecording) {
-                                saveToConversation(speaker, text);
+                                // Determine the role based on the speaker name
+                                let speakerRole = userRole; // Default to current user's role
+                                if (!isOwnMessage) {
+                                    // This is from another user, determine their role
+                                    speakerRole = userRole === 'doctor' ? 'patient' : 'doctor';
+                                }
+                                saveToConversation(speakerRole, text);
                             }
+                            
+                            // Use appropriate CSS class based on who sent the message
+                            const messageClass = isOwnMessage ? 'user-message' : 'bot-message';
+                            addMessage(message, messageClass);
                         }
-                        addMessage(message, 'bot-message');
                     }
                 }
             } catch (error) {

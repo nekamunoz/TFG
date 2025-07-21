@@ -3,7 +3,7 @@
 {% block content %} 
 
 <body data-username="{{request.user}}" data-role="{{request.user.role}}" data-roomid="{{room_id}}" data-server="{{serverIp}}" data-port="{{port}}">
-    <div class="container mt-5 mb-5">
+    <div class="container mt-4 mb-3">
         <!-- Control Buttons -->
         <div id="video-controls" class="mt-3 d-flex justify-content-center gap-2">
             <button id="btn-toggle-audio" class="btn btn-primary">
@@ -15,24 +15,29 @@
             <a href="{% url 'dashboard' %}" class="btn btn-secondary">Exit</a>
         </div>
         <!-- Responsive Video Grid -->
-        <div id="video-container" class="video-grid-container mt-4">
+        <div id="video-container" class="video-grid-container">
             <div class="video-wrapper">
                 <video id="local-video" class="rounded" autoplay playsinline></video>
                 <div class="video-label"> {{ request.user.username }}</div>
             </div>
         </div>
         <!-- Transcription Container -->
-        <div id="chat-container" class="mt-3 pb-3 border rounded bg-light">
-            <h5>Transcription</h5>
-            <div id="chat-messages" style="min-height: 100px; max-height: 300px; overflow-y: auto;"></div>
-            <div class="mt-2">
-                {% if request.user.role == 'doctor' %}
-                    <button id="btn-start-recording" class="btn btn-primary">Start Recording</button>
-                    <button id="btn-export-conversation" class="btn btn-success">Save Conversation</button>
-                {% endif %}
+        <div id="chat-container" class="mt-4 p-4 border rounded bg-light shadow-sm">
+            <h5 class="text-primary">Transcription</h5>
+            <div id="chat-messages" class="p-3 bg-white border rounded" style="min-height: 150px; max-height: 150px; overflow-y: auto;">
+                <!-- Transcribed text will appear here -->
             </div>
+            {% if request.user.role == 'doctor' %}
+                <div class="mt-3 d-flex gap-2">
+                    <button id="btn-start-recording" class="btn btn-primary">
+                        Start Saving
+                    </button>
+                    <button id="btn-export-conversation" class="btn btn-success">
+                        Export
+                    </button>
+                </div>
+            {% endif %}
         </div>
-        
         <script type="module" src="{% static 'js/videochat.js' %}"></script>
         <script src="{% static 'js/text.js' %}?v={{ timestamp }}"></script>
     </div>

@@ -7,13 +7,14 @@ def summarize_medical_conversation(conversation):
     prompt = f"""
     Below is a conversation between a doctor and a patient. 
     Please create a **concise and factual medical report** that only separates and lists the following:
+    Medical Session Notes
+    - Patient's description:
+    - Reason for visit:
+    - Symptoms:
+    - Past medical history:
+    - Current medications:
 
-    - Patient's description
-    - Reason for visit
-    - Symptoms
-    - Past medical history
-    - Current medications
-
+    Data must follow the previous structure and be concise.
     The response should only contain the **medical summary**, with no added information or reasoning.
 
     Here's the conversation:
