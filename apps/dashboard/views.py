@@ -37,7 +37,7 @@ def dashboard(request):
         'appointments': appointments.order_by('date'),
         'pending_appointments': pending_appointments,
         'replacement_appointments': replacement_appointments,
-        'today': date(2025, 7, 28)
+        'today': date.today()
     }
         
     return render(request, template, context)

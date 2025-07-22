@@ -4,6 +4,7 @@ from django.dispatch import receiver
 import threading
 from apps.appointment.models import Appointment
 from apps.teleconsult.process_dialoge import summarize_medical_conversation
+from apps.teleconsult.process_dialoge import conversation_queue
 
 def process_conversation(conversation):
     try:
@@ -33,4 +34,7 @@ class Conversation(models.Model):
 @receiver(post_save, sender=Conversation)
 def auto_process_conversation(sender, instance, created, **kwargs):
     if created:
-        threading.Thread(target=process_conversation, args=(instance,)).start()
+        #threading.Thread(target=process_conversation, args=(instance,)).start()
+        #Nekane: Once a processing request arrives, we enqueue it.
+        print(f"[Queue] Enqueuing conversation {instance.id}")
+        conversation_queue.put(instance)
